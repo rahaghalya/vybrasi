@@ -8,9 +8,9 @@
         <div class="hero-text">
             <h1>Racikan Kopi Premium dengan Sentuhan Gula Aren Asli Nusantara</h1>
             <p>Racikan terbaik dengan cita rasa autentik</p>
-            <a href="#" class="btn-dark">
-                <i class="fa-solid fa-table-cells"></i> Lihat Produk
-            </a>
+        <a href="{{ route('produk') }}" class="btn-dark" style="text-decoration: none;">
+             <i class="fa-solid fa-table-cells"></i> Lihat Produk Kami
+         </a>
         </div>
         <div class="hero-image">
             <img src="{{ asset('images/foto_beranda.png') }}" alt="Kopi Premium">

@@ -66,3 +66,8 @@ Route::get('/metode-pembayaran', function () {
 Route::get('/review-pesanan', function () {
     return view('pages.review-pesanan'); // Pastikan nama file blade-nya review-pesanan.blade.php
 })->name('pesanan.review');
+
+// Route untuk halaman Pesanan Berhasil
+Route::get('/pesanan-berhasil', function () {
+    return view('pages.pesanan-berhasil'); 
+})->name('pesanan.berhasil');

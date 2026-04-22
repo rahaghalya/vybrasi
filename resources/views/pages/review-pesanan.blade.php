@@ -61,9 +61,9 @@
             <a href="{{ route('pembayaran.metode') }}" class="btn-action-outline">
                 <i class="fa-solid fa-arrow-left-long"></i> Kembali
             </a>
-            <button type="submit" class="btn-action-solid">
-                Konfirmasi Pesanan <i class="fa-solid fa-arrow-right-long"></i>
-            </button>
+<a href="{{ route('pesanan.berhasil') }}" class="btn-action-solid" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
+    Konfirmasi Pesanan <i class="fa-solid fa-arrow-right-long"></i>
+</a>
         </div>
 
     </div>
