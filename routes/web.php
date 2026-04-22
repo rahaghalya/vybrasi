@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 
 // Rute untuk Halaman Beranda
 Route::get('/', function () {
@@ -71,3 +72,6 @@ Route::get('/review-pesanan', function () {
 Route::get('/pesanan-berhasil', function () {
     return view('pages.pesanan-berhasil'); 
 })->name('pesanan.berhasil');
+
+// Route untuk Admin Vybrasi
+Route::get('/admin/beranda', [AdminController::class, 'index']);
