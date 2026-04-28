@@ -24,7 +24,7 @@
 
         <div class="wa-box">
             <p class="wa-text">Setelah tranfer, konfirmasi via WhatsApp dengan<br>kirim bukti bayar & kode order Anda.</p>
-            <a href="https://wa.me/6283546795016" target="_blank" class="btn-wa">
+            <a href="https://wa.me/6283114459227" target="_blank" class="btn-wa">
                 <i class="fa-brands fa-whatsapp"></i> Kirim Bukti
             </a>
         </div>

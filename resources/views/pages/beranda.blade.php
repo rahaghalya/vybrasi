@@ -3,20 +3,21 @@
 @section('title', 'Vybrasi - Beranda')
 
 @section('content')
-<header class="hero">
-    <div class="hero-card">
-        <div class="hero-text">
-            <h1>Racikan Kopi Premium dengan Sentuhan Gula Aren Asli Nusantara</h1>
-            <p>Racikan terbaik dengan cita rasa autentik</p>
-        <a href="{{ route('produk') }}" class="btn-dark" style="text-decoration: none;">
-             <i class="fa-solid fa-table-cells"></i> Lihat Produk Kami
-         </a>
+    <header class="hero">
+        <div class="hero-card">
+            <div class="hero-text">
+                <h1>Racikan Kopi Premium dengan Sentuhan Gula Aren Asli Nusantara</h1>
+                <p>Racikan terbaik dengan cita rasa autentik</p>
+                <a href="{{ route('produk') }}" class="btn-ultra-premium" style="text-decoration: none;">
+                    <i class="fa-solid fa-table-cells" style="color: #D4A373; z-index: 2;"></i> 
+                    <span>Lihat Produk Kami</span>
+                </a>
+            </div>
+            <div class="hero-image">
+                <img src="{{ asset('images/foto_beranda.png') }}" alt="Kopi Premium">
+            </div>
         </div>
-        <div class="hero-image">
-            <img src="{{ asset('images/foto_beranda.png') }}" alt="Kopi Premium">
-        </div>
-    </div>
-</header>
+    </header>
 
     <section class="tentang">
         <div class="tentang-images">
@@ -63,26 +64,71 @@
                 <div class="unggulan-img-placeholder"></div>
                 <div class="unggulan-info">
                     <h3>Biji Kopi</h3>
-                    <p>dhfvehnsdbiugehbdubfchfbefsdvbcudbcfnedjhbcehcfhhebshcdhbefcjbfcbscudevbdhbeqdgfojb</p>
-                    <a href="#" class="btn-brown">Lihat Menu</a>
+                    <a href="{{ route('produk', ['filter' => 'unggulan']) }}" class="btn-brown">Lihat Menu</a>
                 </div>
             </div>
             <div class="unggulan-card">
                 <div class="unggulan-img-placeholder"></div>
                 <div class="unggulan-info">
                     <h3>Gula Aren</h3>
-                    <p>dhfvehnsdbiugehbdubfchfbefsdvbcudbcfnedjhbcehcfhhebshcdhbefcjbfcbscudevbdhbeqdgfojb</p>
-                    <a href="#" class="btn-brown">Lihat Menu</a>
+                    <a href="{{ route('produk', ['filter' => 'unggulan']) }}" class="btn-brown">Lihat Menu</a>
                 </div>
             </div>
             <div class="unggulan-card">
                 <div class="unggulan-img-placeholder"></div>
                 <div class="unggulan-info">
                     <h3>Nama Produk</h3>
-                    <p>dhfvehnsdbiugehbdubfchfbefsdvbcudbcfnedjhbcehcfhhebshcdhbefcjbfcbscudevbdhbeqdgfojb</p>
-                    <a href="#" class="btn-brown">Lihat Menu</a>
+                    <a href="{{ route('produk', ['filter' => 'unggulan']) }}" class="btn-brown">Lihat Menu</a>
                 </div>
             </div>
         </div>
+    </section>
+
+    <section class="testimonial-section">
+        <div class="section-header">
+            <h2>Pengalaman Bersama Kami</h2>
+            <p>Cerita nyata dari mereka yang telah mencicipi seduhan Vybrasi.</p>
+        </div>
+
+       <div class="testi-grid">
+            
+            <div class="testi-card">
+                <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                <div class="testi-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="testi-text">
+                    "Jujur, kualitasnya di luar ekspektasi! Packaging-nya sangat premium. Saat Drip Bag-nya diseduh, aroma kopinya langsung memenuhi ruangan. Benar-benar teman yang pas buat lembur deadline."
+                </p>
+                <div class="testi-separator"></div>
+                <div class="testi-author">Fadil Prasetyo</div>
+            </div>
+
+            <div class="testi-card">
+                <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                <div class="testi-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="testi-text">
+                    "Kopi Arabica Gayo dari Vybrasi sangat smooth, aftertaste-nya luar biasa, dan yang paling penting: sangat nyaman di lambung saya. Pasti bakal repurchase dan jadi daily coffee."
+                </p>
+                <div class="testi-separator"></div>
+                <div class="testi-author">Fadil Prasetyo</div>
+            </div>
+
+            <div class="testi-card">
+                <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                <div class="testi-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                </div>
+                <p class="testi-text">
+                    "Awalnya ragu pesan untuk acara kantor, tapi ternyata pelayanan Vybrasi sangat profesional. Cold Brew-nya segar dan semua rekan kerja saya menyukainya. Sangat direkomendasikan!"
+                </p>
+                <div class="testi-separator"></div>
+                <div class="testi-author">Fadil Praseetyo</div>
+            </div>
+        </div>
+
+    </div>
     </section>
 @endsection

@@ -66,13 +66,13 @@
                     <textarea name="alamat" rows="4"></textarea>
                 </div>
 
-                <div class="sync-profile-wrapper">
-                    <span>Sesuaikan dengan Profil</span>
-                    <label class="cart-checkbox">
-                        <input type="checkbox" name="sync_profil">
-                        <span class="checkmark-circle"></span>
-                    </label>
-                </div>
+               <div class="sync-profile-wrapper">
+    <span>Sesuaikan dengan profil</span>
+    <label class="premium-toggle">
+        <input type="checkbox" name="sync_profil">
+        <span class="toggle-slider"></span>
+    </label>
+</div>
 
                 <div class="form-group half-width">
                     <label>Kode Unik</label>
@@ -101,4 +101,36 @@
 
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Karena di checkout biasanya hanya ada satu pemilih jumlah untuk produk utama,
+        // kita bisa menargetkannya secara langsung
+        const minusBtn = document.querySelector('.checkout-qty-wrapper .qty-btn.minus');
+        const plusBtn = document.querySelector('.checkout-qty-wrapper .qty-btn.plus');
+        const qtySpan = document.querySelector('.checkout-qty-wrapper .qty-num');
+
+        // Pastikan elemennya ada agar tidak error
+        if (minusBtn && plusBtn && qtySpan) {
+            
+            // Fungsi untuk tombol Kurang (-)
+            minusBtn.addEventListener('click', function() {
+                let currentQty = parseInt(qtySpan.textContent);
+                
+                // Cegah angka turun di bawah 1
+                if (currentQty > 1) {
+                    currentQty--;
+                    qtySpan.textContent = currentQty;
+                }
+            });
+
+            // Fungsi untuk tombol Tambah (+)
+            plusBtn.addEventListener('click', function() {
+                let currentQty = parseInt(qtySpan.textContent);
+                currentQty++;
+                qtySpan.textContent = currentQty;
+            });
+        }
+    });
+</script>
 @endsection

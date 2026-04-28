@@ -11,9 +11,6 @@
             <div class="avatar-wrapper">
                 <i class="fa-solid fa-circle-user" style="font-size: 130px; color: #FFFFFF;"></i>
             </div>
-            <button type="button" class="btn-ubah-avatar">
-                <i class="fa-regular fa-pen-to-square"></i> Ubah
-            </button>
         </div>
 
         <form action="#" method="POST" class="edit-profil-form">
@@ -70,9 +67,12 @@
 
             </div>
             
-            <div class="form-action">
-                <button type="submit" class="btn-simpan-light">Simpan</button>
-            </div>
+           <div class="form-action">
+    <button type="submit" class="btn-simpan-profil">
+        <span>Simpan Perubahan</span>
+        <i class="fa-solid fa-check-double"></i>
+    </button>
+</div>
         </form>
     </div>
 </div>

@@ -73,5 +73,44 @@ Route::get('/pesanan-berhasil', function () {
     return view('pages.pesanan-berhasil'); 
 })->name('pesanan.berhasil');
 
-// Route untuk Admin Vybrasi
-Route::get('/admin/beranda', [AdminController::class, 'index']);
+
+
+
+//ADMIN ROUTES
+
+
+// Route untuk Admin Vybrasi (Beranda)
+Route::get('/admin/beranda', [AdminController::class, 'index'])->name('admin.beranda');
+
+// Route BARU untuk Admin Vybrasi (Manajemen Produk)
+Route::get('/admin/produk', [AdminController::class, 'produk'])->name('admin.produk');
+
+// Route BARU untuk Admin Vybrasi (Manajemen Produk (tambah produk))
+Route::get('/admin/produk/tambah', [AdminController::class, 'tambahProduk'])->name('admin.produk.tambah');
+
+// Route BARU untuk Admin Vybrasi (Manajemen Produk (edit produk))
+Route::get('/admin/produk/edit/{id?}', [AdminController::class, 'editProduk'])->name('admin.produk.edit');
+
+// ROUTE BARU AFFILIATE
+Route::get('/admin/affiliate', [AdminController::class, 'affiliate'])->name('admin.affiliate');
+
+// ROUTE BARU AFFILIATE(tambah affiliate)
+Route::get('/admin/affiliate/tambah', [AdminController::class, 'tambahAffiliate'])->name('admin.affiliate.tambah');
+
+// ROUTE BARU AFFILIATE(profil affiliate)
+Route::get('/admin/affiliate/profil/{id?}', [AdminController::class, 'profilAffiliate'])->name('admin.affiliate.profil');
+
+// ROUTE BARU LAPORAN TRANSAKSI
+Route::get('/admin/laporan-transaksi', [AdminController::class, 'laporanTransaksi'])->name('admin.laporan');
+
+// ROUTE BARU DETAIL TRANSAKSI
+Route::get('/admin/transaksi/detail/{id?}', [AdminController::class, 'detailTransaksi'])->name('admin.transaksi.detail');
+
+// ROUTE BARU PENGIRIMAN
+Route::get('/admin/pengiriman', [AdminController::class, 'pengiriman'])->name('admin.pengiriman');
+
+// ROUTE BARU PESAN
+Route::get('/admin/pesan', [AdminController::class, 'pesan'])->name('admin.pesan');
+
+// ROUTE BARU PESANAN BARU
+Route::get('/admin/pesanan-baru', [AdminController::class, 'pesananBaru'])->name('admin.pesanan_baru');

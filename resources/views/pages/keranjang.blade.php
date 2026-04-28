@@ -21,7 +21,7 @@
             <div class="cart-info">
                 <h3>Kopi Arabica</h3>
                 <p>250gr - Premium Roast</p>
-                <div class="cart-price">Rp 50.000</div>
+                <div class="cart-price" data-price="50000">Rp 50.000</div>
             </div>
 
             <div class="cart-qty-wrapper">
@@ -44,7 +44,7 @@
             <div class="cart-info">
                 <h3>Kopi Arabica</h3>
                 <p>250gr - Premium Roast</p>
-                <div class="cart-price">Rp 100.000</div>
+                <div class="cart-price" data-price="100000">Rp 100.000</div>
             </div>
 
             <div class="cart-qty-wrapper">
@@ -60,4 +60,40 @@
 
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ambil semua tombol minus dan plus di halaman
+        const minusBtns = document.querySelectorAll('.qty-btn.minus');
+        const plusBtns = document.querySelectorAll('.qty-btn.plus');
+
+        // Logika untuk tombol Minus (-)
+        minusBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                // Cari elemen angka (qty-num) yang berada di sebelah tombol ini
+                const qtySpan = this.parentElement.querySelector('.qty-num');
+                let currentQty = parseInt(qtySpan.textContent);
+
+                // Pastikan angka tidak bisa kurang dari 1
+                if (currentQty > 1) {
+                    currentQty--;
+                    qtySpan.textContent = currentQty;
+                }
+            });
+        });
+
+        // Logika untuk tombol Plus (+)
+        plusBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                // Cari elemen angka (qty-num) yang berada di sebelah tombol ini
+                const qtySpan = this.parentElement.querySelector('.qty-num');
+                let currentQty = parseInt(qtySpan.textContent);
+
+                // Tambahkan 1 ke angka saat ini
+                currentQty++;
+                qtySpan.textContent = currentQty;
+            });
+        });
+    });
+</script>
 @endsection

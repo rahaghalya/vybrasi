@@ -8,32 +8,36 @@
     <aside class="sidebar-filter">
         <h2>Filter</h2>
         
-        <div class="filter-group">
-            <div class="filter-header">
-                <h3>Kategori</h3>
-                <span>v</span>
-            </div>
-            <label class="custom-checkbox">
-                <input type="checkbox" checked>
-                <span class="checkmark"></span>
-                Semua
-            </label>
-            <label class="custom-checkbox">
-                <input type="checkbox">
-                <span class="checkmark"></span>
-                Gula Aren
-            </label>
-            <label class="custom-checkbox">
-                <input type="checkbox">
-                <span class="checkmark"></span>
-                Signature Series
-            </label>
-            <label class="custom-checkbox">
-                <input type="checkbox">
-                <span class="checkmark"></span>
-                Paket Bundling
-            </label>
-        </div>
+<div class="filter-group">
+    <div class="filter-header">
+        <h3>Kategori</h3>
+        <span>v</span>
+    </div>
+    
+    <label class="custom-checkbox">
+        <input type="checkbox" {{ !request('filter') ? 'checked' : '' }}>
+        <span class="checkmark"></span>
+        Semua
+    </label>
+
+    <label class="custom-checkbox">
+        <input type="checkbox" {{ request('filter') == 'gula_aren' ? 'checked' : '' }}>
+        <span class="checkmark"></span>
+        Gula Aren
+    </label>
+
+    <label class="custom-checkbox">
+        <input type="checkbox" {{ request('filter') == 'signature' ? 'checked' : '' }}>
+        <span class="checkmark"></span>
+        Signature Series
+    </label>
+
+    <label class="custom-checkbox">
+        <input type="checkbox" {{ request('filter') == 'unggulan' ? 'checked' : '' }}>
+        <span class="checkmark"></span>
+        Produk Unggulan
+    </label>
+</div>
 
         <hr class="filter-divider">
 
