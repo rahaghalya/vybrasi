@@ -114,3 +114,12 @@ Route::get('/admin/pesan', [AdminController::class, 'pesan'])->name('admin.pesan
 
 // ROUTE BARU PESANAN BARU
 Route::get('/admin/pesanan-baru', [AdminController::class, 'pesananBaru'])->name('admin.pesanan_baru');
+
+Route::get('/daftar', function () {
+    return view('auth.daftar');
+})->name('daftar');
+
+// Sesuaikan return view() dengan nama folder tempat kamu menyimpan login.blade.php
+Route::get('/login', function () {
+    return view('auth.login'); 
+})->name('login');
