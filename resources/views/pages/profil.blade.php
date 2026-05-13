@@ -1,14 +1,21 @@
 @extends('layouts.app')
 
-@section('title', 'Vybrasi - Profil Saya')
+@section('title', 'Vybrasi - Menu Profil')
 
 @section('content')
 <div class="profil-page-container">
     <div class="profil-card">
         
         <div class="profil-header">
-            <img src="{{ asset('images/avatar.png') }}" alt="Fadil Prasetyo" class="profil-avatar">
-            <h2 class="profil-name">Fadil Prasetyo</h2>
+            {{-- Cek apakah user memiliki avatar di database --}}
+            @if(auth()->user()->avatar_url)
+                <img src="{{ asset('storage/' . auth()->user()->avatar_url) }}" alt="{{ auth()->user()->full_name }}" class="profil-avatar" style="object-fit: cover;">
+            @else
+                <img src="{{ asset('images/avatar.png') }}" alt="{{ auth()->user()->full_name }}" class="profil-avatar">
+            @endif
+            
+            {{-- Menampilkan nama lengkap dari database --}}
+            <h2 class="profil-name">{{ auth()->user()->full_name ?? 'Pengguna Vybrasi' }}</h2>
         </div>
 
         <hr class="profil-divider">
@@ -29,10 +36,16 @@
                 <span>Keranjang Saya</span>
             </a>
             
-            <a href="#" class="profil-menu-item">
+            {{-- Tombol Logout yang memicu form tersembunyi --}}
+            <a href="#" class="profil-menu-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                 <i class="fa-solid fa-power-off"></i>
                 <span>Keluar</span>
             </a>
+            
+            {{-- Form tersembunyi untuk proses POST Logout --}}
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
         </div>
 
     </div>

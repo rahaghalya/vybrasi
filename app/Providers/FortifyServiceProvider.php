@@ -85,7 +85,10 @@ class FortifyServiceProvider extends ServiceProvider
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
 
-            return Limit::perMinute(5)->by($throttleKey);
+            // Batas 3 kali gagal, blokir selama 1440 menit (24 jam), lalu munculkan error
+            return (new Limit($throttleKey, 3, 1440))->response(function () {
+                return redirect('/login')->with('error_popup', 'login gagal anda bukan admin kami, silahkan tunggu 24 jam');
+            });
         });
     }
 }

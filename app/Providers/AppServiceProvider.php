@@ -23,7 +23,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->configureDefaults();
+        // Paginator bawaan Bosku (Biarkan kalau ada)
+        // \Illuminate\Pagination\Paginator::useBootstrap();
+
+        // --- CARA BARU YANG LEBIH KUAT UNTUK GLOBAL VARIABEL ---
+        \Illuminate\Support\Facades\View::composer('*', function ($view) {
+            try {
+                // Ambil data dari database CMS
+                $cms = \Illuminate\Support\Facades\DB::table('jualan_kopi.settings')->pluck('value', 'key')->toArray();
+                $view->with('cms', $cms);
+            } catch (\Exception $e) {
+                // Jika error, kirim array kosong agar web tidak mati
+                $view->with('cms', []);
+            }
+        });
     }
 
     /**

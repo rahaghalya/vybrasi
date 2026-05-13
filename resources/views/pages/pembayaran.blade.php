@@ -8,19 +8,21 @@
         
         <h2 class="pembayaran-title">Pilih Pembayaran</h2>
 
-        <form action="#" method="POST" class="pembayaran-form">
+        {{-- PERUBAHAN: Form Action menuju pembayaran.proses menggunakan POST --}}
+        <form action="{{ route('pembayaran.proses') }}" method="POST" class="pembayaran-form" id="form-pembayaran">
             @csrf
             
             <div class="payment-list">
+                
                 <label class="payment-option">
-                    <input type="radio" name="bank" value="bank_a" checked>
+                    <input type="radio" name="metode_pembayaran" value="qris" checked onchange="closeBankDropdown()">
                     <div class="payment-content">
-                        <div class="payment-icon">
-                            <i class="fa-solid fa-building-columns"></i>
+                        <div class="payment-icon" style="background: #eef2f5; color: #333;">
+                            <i class="fa-solid fa-qrcode"></i>
                         </div>
                         <div class="payment-text">
-                            <h4>Transfer Bank A</h4>
-                            <p>TERSEDIA 24 JAM, KONFIRMASI MANUAL</p>
+                            <h4>QRIS (Gopay, OVO, Dana, LinkAja)</h4>
+                            <p>Bayar instan menggunakan aplikasi e-wallet pilihanmu.</p>
                         </div>
                         <div class="payment-radio">
                             <span class="radio-circle"></span>
@@ -28,65 +30,108 @@
                     </div>
                 </label>
 
-                <label class="payment-option">
-                    <input type="radio" name="bank" value="bank_b">
-                    <div class="payment-content">
-                        <div class="payment-icon">
-                            <i class="fa-solid fa-building-columns"></i>
+                <div class="payment-accordion">
+                    <div class="accordion-header" onclick="toggleBankDropdown()" id="btn-toggle-bank">
+                        <div class="header-left">
+                            <div class="payment-icon">
+                                <i class="fa-solid fa-building-columns"></i>
+                            </div>
+                            <div class="payment-text">
+                                <h4>Transfer Bank</h4>
+                                <p>Pilih bank untuk melihat instruksi pembayaran.</p>
+                            </div>
                         </div>
-                        <div class="payment-text">
-                            <h4>Transfer Bank B</h4>
-                            <p>TERSEDIA 24 JAM, KONFIRMASI MANUAL</p>
-                        </div>
-                        <div class="payment-radio">
-                            <span class="radio-circle"></span>
-                        </div>
+                        <i class="fa-solid fa-chevron-down accordion-arrow" id="arrow-bank"></i>
                     </div>
-                </label>
 
-                <label class="payment-option">
-                    <input type="radio" name="bank" value="bank_c">
-                    <div class="payment-content">
-                        <div class="payment-icon">
-                            <i class="fa-solid fa-building-columns"></i>
-                        </div>
-                        <div class="payment-text">
-                            <h4>Transfer Bank C</h4>
-                            <p>TERSEDIA 24 JAM, KONFIRMASI MANUAL</p>
-                        </div>
-                        <div class="payment-radio">
-                            <span class="radio-circle"></span>
-                        </div>
-                    </div>
-                </label>
+                    <div class="accordion-body" id="dropdown-bank" style="display: none;">
+                        
+                        <label class="payment-option sub-option">
+                            <input type="radio" name="metode_pembayaran" value="bca">
+                            <div class="payment-content">
+                                <div class="payment-text">
+                                    <h4>Bank BCA</h4>
+                                    <p>Pengecekan otomatis via Virtual Account</p>
+                                </div>
+                                <div class="payment-radio">
+                                    <span class="radio-circle"></span>
+                                </div>
+                            </div>
+                        </label>
 
-                <label class="payment-option">
-                    <input type="radio" name="bank" value="bank_d">
-                    <div class="payment-content">
-                        <div class="payment-icon">
-                            <i class="fa-solid fa-building-columns"></i>
-                        </div>
-                        <div class="payment-text">
-                            <h4>Transfer Bank D</h4>
-                            <p>TERSEDIA 24 JAM, KONFIRMASI MANUAL</p>
-                        </div>
-                        <div class="payment-radio">
-                            <span class="radio-circle"></span>
-                        </div>
+                        <label class="payment-option sub-option">
+                            <input type="radio" name="metode_pembayaran" value="bri">
+                            <div class="payment-content">
+                                <div class="payment-text">
+                                    <h4>Bank BRI</h4>
+                                    <p>Pengecekan otomatis via Virtual Account</p>
+                                </div>
+                                <div class="payment-radio">
+                                    <span class="radio-circle"></span>
+                                </div>
+                            </div>
+                        </label>
+
                     </div>
-                </label>
+                </div>
+
             </div>
 
-            <div class="pembayaran-actions">
-                <a href="{{ route('checkout') }}" class="btn-kembali">
-                    <i class="fa-solid fa-arrow-left-long"></i> Kembali
+            <div class="pembayaran-actions" style="margin-top: 30px; display: flex; justify-content: space-between; gap: 15px;">
+                <a href="{{ route('checkout') }}" class="btn-kembali" style="padding: 12px 24px; border: 1px solid #333; color: #333; text-decoration: none; border-radius: 8px; display: flex; align-items: center;">
+                    <i class="fa-solid fa-arrow-left-long" style="margin-right: 8px;"></i> Kembali
                 </a>
-                <a href="{{ route('pesanan.review') }}" class="btn-review" style="text-decoration: none; justify-content: center;">
-                    Review Pesanan <i class="fa-solid fa-arrow-right-long"></i>
-                </a>
+                
+                {{-- PERUBAHAN: Button tipe Submit --}}
+                <button type="submit" class="btn-review" style="background: #D4A373; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; font-size: 16px; font-weight: bold; width: 100%; justify-content: center;">
+                    Review Pesanan <i class="fa-solid fa-arrow-right-long" style="margin-left: 8px;"></i>
+                </button>
             </div>
 
         </form>
     </div>
 </div>
+
+<style>
+    .payment-accordion {
+        border: 1px solid #eaeaea; border-radius: 12px; overflow: hidden; margin-top: 15px; transition: all 0.3s ease;
+    }
+    .accordion-header {
+        display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; cursor: pointer; transition: background 0.3s;
+    }
+    .accordion-header:hover { background: #fcfcfc; }
+    .header-left { display: flex; align-items: center; gap: 15px; }
+    .accordion-arrow { color: #888; transition: transform 0.3s ease; }
+    .accordion-arrow.open { transform: rotate(180deg); }
+    .accordion-body { background: #fafafa; border-top: 1px solid #eaeaea; padding: 10px 20px 20px 20px; }
+    .sub-option { margin-top: 10px; background: #fff; border: 1px solid #ddd; }
+</style>
+
+<script>
+    const dropdownBank = document.getElementById('dropdown-bank');
+    const arrowBank = document.getElementById('arrow-bank');
+    const radioBanks = document.querySelectorAll('input[value="bca"], input[value="bri"]');
+
+    function toggleBankDropdown() {
+        if (dropdownBank.style.display === "none") {
+            dropdownBank.style.display = "block";
+            arrowBank.classList.add("open");
+        } else {
+            dropdownBank.style.display = "none";
+            arrowBank.classList.remove("open");
+        }
+    }
+
+    function closeBankDropdown() {
+        dropdownBank.style.display = "none";
+        arrowBank.classList.remove("open");
+    }
+
+    radioBanks.forEach(radio => {
+        radio.addEventListener('change', function() {
+            dropdownBank.style.display = "block";
+            arrowBank.classList.add("open");
+        });
+    });
+</script>
 @endsection

@@ -1,248 +1,281 @@
 @extends('layouts.admin')
-@section('title', 'Pesanan Baru (Kitchen Display)')
 
 @section('content')
+<style>
+body, .admin-container, .main-content, .content-body, section.content-body, main.main-content, .content-wrapper, .page-wrapper, .main-wrapper, .inner-content, .dashboard-content, [class*="content"], [class*="wrapper"], [class*="main"] { background: #0a0a0a !important; background-color: #0a0a0a !important; }
+aside, .sidebar, [class*="sidebar"] { background: unset !important; background-color: unset !important; }
+</style>
+
 <div class="pesanan-baru-container">
-    <h2 class="pesanan-baru-title">DAFTAR PESANAN</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h2 class="page-title" style="margin: 0; font-size: 20px; font-weight: 800; color: #fff; border-left: 4px solid #D4A373; padding-left: 12px;">KITCHEN DISPLAY (KANBAN)</h2>
+        <span style="font-size: 12px; color: #888; background: #111; padding: 5px 10px; border-radius: 20px; border: 1px solid #222;">
+            <i class="fas fa-sync-alt fa-spin" style="margin-right: 5px; color: #D4A373;"></i> Auto-update aktif
+        </span>
+    </div>
 
     <div class="kanban-board">
         
-<div class="kanban-column" id="col-masuk">
+        {{-- KOLOM 1: PESANAN BARU MASUK --}}
+        <div class="kanban-column" id="col-masuk">
             <div class="kanban-header">
-                <h3>Pesanan Baru Masuk</h3>
-                <span class="order-count" id="count-masuk">3</span>
+                <h3>PESANAN BARU</h3>
+                <span class="order-count" id="count-masuk">{{ count($masuk) }}</span>
             </div>
             <div class="kanban-body">
-                
-                <div class="receipt-card" id="order-VF671" data-timestamp="13">
-                    <div class="receipt-header">
-                        <span class="order-id">#VF671</span>
-                        <span class="order-timer">
-                            <i class="fas fa-clock"></i> <span class="time-text">13</span> mnt lalu
-                        </span>
-                    </div>
-                    <div class="receipt-customer"><i class="fas fa-user-circle"></i> A</div>
-                    <div class="receipt-items">
-                        <div class="item-row"><span class="item-qty">2x</span><span class="item-name">Kopi Arabica Gayo</span></div>
-                        <div class="item-row"><span class="item-qty">1x</span><span class="item-name">Signature Drip Bag</span></div>
-                    </div>
-                    <div class="receipt-total">
-                        <span>TOTAL</span><span>Rp 120.000</span>
-                    </div>
-                    <div class="aksi-buttons" id="action-VF671">
-                        <button class="btn-tolak" onclick="tolakPesanan('order-VF671')">Tolak</button>
-                        <button class="btn-terima" onclick="terimaPesanan('order-VF671')">Terima</button>
-                    </div>
-                </div>
+                @foreach($masuk->sortByDesc('created_at') as $trx)
+                    <div class="receipt-card" id="order-{{ $trx->id_transaksi }}">
+                        <div class="receipt-header">
+                            <span class="order-id">{{ $trx->no_invoice }}</span>
+                            <span class="order-timer"><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($trx->created_at)->diffForHumans() }}</span>
+                        </div>
+                        
+                        <div class="receipt-customer text-white-force">
+                            <i class="fas fa-user-circle" style="color: #D4A373; font-size: 18px;"></i> 
+                            {{ $trx->nama_pelanggan }}
+                        </div>
 
-                <div class="receipt-card" id="order-VF672" data-timestamp="9">
-                    <div class="receipt-header">
-                        <span class="order-id">#VF672</span>
-                        <span class="order-timer">
-                            <i class="fas fa-clock"></i> <span class="time-text">9</span> mnt lalu
-                        </span>
+                        <div class="receipt-items">
+                            @foreach($trx->items as $item)
+                                <div class="item-row">
+                                    <span class="item-qty" style="color:#D4A373">{{ $item->jumlah }}x</span>
+                                    <span class="item-name" style="color:#ccc">{{ current(explode(' ', $item->nama_produk)) }}...</span>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="aksi-buttons" id="action-{{ $trx->id_transaksi }}">
+                            {{-- UBAH: Panggil Modal Upload Bukti --}}
+                            <button class="btn-terima" onclick="bukaModalBukti('{{ $trx->id_transaksi }}')">PROSES SEKARANG</button>
+                        </div>
                     </div>
-                    <div class="receipt-customer"><i class="fas fa-user-circle"></i> B</div>
-                    <div class="receipt-items">
-                        <div class="item-row"><span class="item-qty">1x</span><span class="item-name">Gula Aren Asli Nusantara</span></div>
-                    </div>
-                    <div class="receipt-total">
-                        <span>TOTAL</span><span>Rp 55.000</span>
-                    </div>
-                    <div class="aksi-buttons" id="action-VF672">
-                        <button class="btn-tolak" onclick="tolakPesanan('order-VF672')">Tolak</button>
-                        <button class="btn-terima" onclick="terimaPesanan('order-VF672')">Terima</button>
-                    </div>
-                </div>
-
-                <div class="receipt-card" id="order-VF673" data-timestamp="3">
-                    <div class="receipt-header">
-                        <span class="order-id">#VF673</span>
-                        <span class="order-timer">
-                            <i class="fas fa-clock"></i> <span class="time-text">3</span> mnt lalu
-                        </span>
-                    </div>
-                    <div class="receipt-customer"><i class="fas fa-user-circle"></i> C</div>
-                    <div class="receipt-items">
-                        <div class="item-row"><span class="item-qty">3x</span><span class="item-name">Cold Brew Original</span></div>
-                    </div>
-                    <div class="receipt-total">
-                        <span>TOTAL</span><span>Rp 90.000</span>
-                    </div>
-                    <div class="aksi-buttons" id="action-VF673">
-                        <button class="btn-tolak" onclick="tolakPesanan('order-VF673')">Tolak</button>
-                        <button class="btn-terima" onclick="terimaPesanan('order-VF673')">Terima</button>
-                    </div>
-                </div>
-
+                @endforeach
             </div>
         </div>
 
+        {{-- KOLOM 2: SEDANG DISIAPKAN --}}
         <div class="kanban-column" id="col-racik">
-            <div class="kanban-header">
-                <h3>Pesanan Sedang Disiapkan</h3>
-                <span class="order-count" id="count-racik">0</span>
+            <div class="kanban-header" style="border-bottom-color: #f59e0b;">
+                <h3>SEDANG DISIAPKAN</h3>
+                <span class="order-count" style="background: rgba(245,158,11,.1); color: #f59e0b;">{{ count($racik) }}</span>
             </div>
-            <div class="kanban-body"></div>
+            <div class="kanban-body">
+                @foreach($racik->sortByDesc('created_at') as $trx)
+                    <div class="receipt-card status-processing" id="order-{{ $trx->id_transaksi }}">
+                        <div class="receipt-header">
+                            <span class="order-id">{{ $trx->no_invoice }}</span>
+                            <span class="order-timer"><i class="fas fa-fire" style="color: #f59e0b;"></i> Diramu</span>
+                        </div>
+                        
+                        <div class="receipt-customer text-white-force">
+                            <i class="fas fa-user-circle" style="color: #f59e0b; font-size: 18px;"></i> 
+                            {{ $trx->nama_pelanggan }}
+                        </div>
+
+                        <div class="receipt-items">
+                            @foreach($trx->items as $item)
+                                <div class="item-row">
+                                    <span class="item-qty" style="color:#f59e0b">{{ $item->jumlah }}x</span>
+                                    <span class="item-name" style="color:#ccc">{{ current(explode(' ', $item->nama_produk)) }}...</span>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="aksi-buttons" id="action-{{ $trx->id_transaksi }}">
+                            {{-- UBAH: Panggil Modal Cetak Barcode --}}
+                            <button class="btn-terima" style="background:#f59e0b;" onclick="bukaModalBarcode('{{ $trx->id_transaksi }}')"><i class="fas fa-barcode"></i> GENERATE BARCODE</button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         </div>
 
+        {{-- KOLOM 3: SIAP DIKIRIM / SELESAI --}}
         <div class="kanban-column" id="col-siap">
-            <div class="kanban-header">
-                <h3>Pesanan Telah Diantar</h3>
-                <span class="order-count" id="count-siap">0</span>
+            <div class="kanban-header" style="border-bottom-color: #10b981;">
+                <h3>SIAP KIRIM / SELESAI</h3>
+                <span class="order-count" style="background: rgba(16,185,129,.1); color: #10b981;">{{ count($siap) }}</span>
             </div>
-            <div class="kanban-body"></div>
+            <div class="kanban-body">
+                @foreach($siap->sortByDesc('created_at') as $trx)
+                    <div class="receipt-card status-ready" id="order-{{ $trx->id_transaksi }}">
+                        <div class="receipt-header">
+                            <span class="order-id" style="color: #10b981;">{{ $trx->no_invoice }}</span>
+                            <span class="order-timer"><i class="fas fa-check-circle" style="color: #10b981;"></i> Selesai</span>
+                        </div>
+                        
+                        <div class="receipt-customer text-white-force">
+                            <i class="fas fa-check-circle" style="color: #10b981; font-size: 18px;"></i> 
+                            {{ $trx->nama_pelanggan }}
+                        </div>
+
+                        <div class="aksi-buttons">
+                            <span style="font-size:12px; color:#888;">Lihat di menu Pengiriman</span>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         </div>
 
     </div>
 </div>
 
+{{-- MODAL 1: UPLOAD BUKTI PEMBAYARAN --}}
+<div id="modalBuktiBayar" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3 style="margin:0; color:#D4A373;"><i class="fas fa-file-invoice-dollar"></i> Validasi Pembayaran</h3>
+            <button onclick="tutupModal('modalBuktiBayar')" class="btn-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="color: #aaa; font-size: 13px; margin-top: 0;">Silakan unggah bukti transfer/pembayaran dari WhatsApp sebelum memproses pesanan ini ke Dapur.</p>
+            <input type="hidden" id="trx-id-bukti">
+            <div style="background: #0a0a0a; padding: 15px; border-radius: 8px; border: 1px dashed #333; text-align: center;">
+                <input type="file" id="fileBuktiBayar" accept="image/*" style="color: #fff; font-size: 12px;">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="tutupModal('modalBuktiBayar')" style="flex:1; background: transparent; color: #888; border: 1px solid #333; border-radius: 6px; padding: 10px; cursor:pointer;">Batal</button>
+                <button onclick="prosesDenganBukti()" style="flex:1; background: #D4A373; color: #111; border: none; border-radius: 6px; padding: 10px; font-weight: bold; cursor:pointer;">Lanjutkan Proses</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- MODAL 2: GENERATE BARCODE / CETAK RESI --}}
+<div id="modalGenerateBarcode" class="modal-overlay">
+    <div class="modal-box" style="text-align: center;">
+        <div class="modal-head" style="justify-content: center;">
+            <h3 style="margin:0; color:#f59e0b;"><i class="fas fa-print"></i> Generate & Cetak Label</h3>
+        </div>
+        <div class="modal-body">
+            <p style="color: #aaa; font-size: 13px; margin-top: 0;">Pesanan selesai diramu! Anda wajib mencetak Barcode Pengiriman sebelum pesanan dipindah ke Siap Kirim.</p>
+            <input type="hidden" id="trx-id-barcode">
+            
+            <i class="fas fa-barcode" style="font-size: 60px; color: #fff; margin: 20px 0;"></i>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="tutupModal('modalGenerateBarcode')" style="flex:1; background: transparent; color: #888; border: 1px solid #333; border-radius: 6px; padding: 10px; cursor:pointer;">Batal</button>
+                <button onclick="cetakLaluPindah()" style="flex:2; background: #f59e0b; color: #111; border: none; border-radius: 6px; padding: 10px; font-weight: bold; cursor:pointer;"><i class="fas fa-print"></i> Cetak Resi & Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- TOAST NOTIFIKASI PESANAN BARU --}}
+<div id="kds-toast" class="kds-toast-box"><i class="fas fa-bell ringing-bell" style="font-size: 20px;"></i><div style="display: flex; flex-direction: column;"><span style="font-size: 15px;">Pesanan Baru Masuk!</span><span style="font-size: 12px; font-weight: 500; color: #333;">Segera cek kolom Pesanan Baru.</span></div></div>
+
 <script>
-    // 1. UPDATE ANGKA PADA HEADER KOLOM
-    function updateCounters() {
-        document.getElementById('count-masuk').innerText = document.querySelectorAll('#col-masuk .receipt-card').length;
-        document.getElementById('count-racik').innerText = document.querySelectorAll('#col-racik .receipt-card').length;
-        document.getElementById('count-siap').innerText = document.querySelectorAll('#col-siap .receipt-card').length;
+    // --- FUNGSI MODAL ---
+    function bukaModalBukti(id) {
+        document.getElementById('trx-id-bukti').value = id;
+        document.getElementById('modalBuktiBayar').classList.add('show');
     }
 
-    // 2. LOGIKA SLA (WAKTU, WARNA & AUTO-SORT FIFO)
-    function applySLA() {
-        const container = document.querySelector('#col-masuk .kanban-body');
-        if (!container) return; // Mencegah error jika elemen tidak ada
+    function bukaModalBarcode(id) {
+        document.getElementById('trx-id-barcode').value = id;
+        document.getElementById('modalGenerateBarcode').classList.add('show');
+    }
 
-        const cards = Array.from(container.querySelectorAll('.receipt-card'));
+    function tutupModal(id) {
+        document.getElementById(id).classList.remove('show');
+    }
 
-        cards.forEach(card => {
-            // Ambil angka waktu
-            let minutesElapsed = parseInt(card.getAttribute('data-timestamp'));
-            
-            // Update teks di HTML
-            const timeText = card.querySelector('.time-text');
-            if (timeText) timeText.innerText = minutesElapsed;
+    // --- LOGIKA TOMBOL MODAL ---
+    function prosesDenganBukti() {
+        const file = document.getElementById('fileBuktiBayar').files[0];
+        if(!file) {
+            alert("Harap masukkan foto bukti pembayaran terlebih dahulu!");
+            return;
+        }
+        // Jika file ada, lanjutkan ke kolom racik
+        let id = document.getElementById('trx-id-bukti').value;
+        tutupModal('modalBuktiBayar');
+        pindahStatus(id, 'shipped', 'col-racik');
+    }
 
-            // Bersihkan warna lama
-            card.classList.remove('status-low', 'status-mid', 'status-high');
+    function cetakLaluPindah() {
+        let id = document.getElementById('trx-id-barcode').value;
+        // Buka tab baru untuk print barcode
+        window.open(`/admin/pengiriman/cetak-resi/${id}`, '_blank');
+        
+        // Pindah status ke Siap Kirim
+        tutupModal('modalGenerateBarcode');
+        pindahStatus(id, 'delivered', 'col-siap');
+    }
 
-            // Berikan warna baru sesuai waktu
-            if (minutesElapsed < 5) {
-                card.classList.add('status-low'); // Hijau
-            } else if (minutesElapsed >= 5 && minutesElapsed <= 10) {
-                card.classList.add('status-mid'); // Kuning
-            } else {
-                card.classList.add('status-high'); // Merah
+    // --- FUNGSI ASLI PINDAH STATUS ---
+    function pindahStatus(idTransaksi, statusBaru, targetKolomId) {
+        const card = document.getElementById('order-' + idTransaksi);
+        const targetBody = document.querySelector(`#${targetKolomId} .kanban-body`);
+        card.style.opacity = '0.5';
+
+        fetch(`/admin/pesanan-baru/update-status/${idTransaksi}/${statusBaru}`, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                targetBody.appendChild(card);
+                card.style.opacity = '1';
+                location.reload(); 
             }
         });
-
-        // Urutkan dari Terlama ke Terbaru
-        cards.sort((a, b) => {
-            return parseInt(b.getAttribute('data-timestamp')) - parseInt(a.getAttribute('data-timestamp'));
-        });
-
-        // Susun ulang di layar
-        cards.forEach(card => container.appendChild(card));
     }
 
-    // Fungsi penambah 1 menit otomatis
-    function addOneMinute() {
-        const cards = document.querySelectorAll('#col-masuk .receipt-card');
-        cards.forEach(card => {
-            let currentMin = parseInt(card.getAttribute('data-timestamp'));
-            card.setAttribute('data-timestamp', currentMin + 1); 
-        });
-        applySLA(); // Warnai dan urutkan lagi
-    }
-
-    // TRIGGER OTOMATIS (Ini yang sebelumnya terlewat)
-    // Jalankan pewarnaan pertama kali saat halaman dibuka
-    document.addEventListener('DOMContentLoaded', applySLA);
-    
-    // Jalankan penambahan waktu setiap 1 menit (60000 milidetik)
-    setInterval(addOneMinute, 60000);
-
-    // 3. AKSI KANBAN: TOLAK PESANAN
-    function tolakPesanan(orderId) {
-        if(confirm('Yakin ingin menolak pesanan ini?')) {
-            const card = document.getElementById(orderId);
-            card.style.opacity = '0';
-            setTimeout(() => {
-                card.remove();
-                updateCounters();
-            }, 300);
+    // Auto Refresh KDS
+    document.addEventListener("DOMContentLoaded", function() {
+        let currentPendingCount = parseInt(document.getElementById('count-masuk').innerText);
+        let previousPendingCount = localStorage.getItem('vyb_pending_orders_count');
+        if (previousPendingCount !== null && currentPendingCount > parseInt(previousPendingCount)) {
+            const toast = document.getElementById('kds-toast');
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 6000);
         }
-    }
-
-    // 4. AKSI KANBAN: TERIMA PESANAN
-    function terimaPesanan(orderId) {
-        const card = document.getElementById(orderId);
-        const targetBody = document.querySelector('#col-racik .kanban-body');
-        
-        card.style.opacity = '0.5';
-        card.style.transform = 'scale(0.95)';
-
-        setTimeout(() => {
-            targetBody.appendChild(card);
-            card.style.opacity = '1';
-            card.style.transform = 'scale(1)';
-            
-            // Hapus class SLA & Tambah class Processing
-            card.classList.remove('status-low', 'status-mid', 'status-high');
-            card.classList.add('status-processing'); 
-            
-            const timerBadge = card.querySelector('.order-timer');
-            timerBadge.innerHTML = '<i class="fas fa-fire"></i> Sedang Disiapkan';
-            timerBadge.style.color = '#D4A373';
-            timerBadge.style.background = 'rgba(212, 163, 115, 0.1)';
-
-            const actionContainer = document.getElementById(`action-${orderId.split('-')[1]}`);
-            actionContainer.innerHTML = `
-                <button class="btn-kanban" onclick="selesaiRacik('${orderId}')">
-                    <i class="fas fa-check"></i> Selesai Disiapkan
-                </button>
-            `;
-
-            updateCounters();
-        }, 200);
-    }
-
-    // 5. AKSI KANBAN: SELESAI DISIAPKAN
-    function selesaiRacik(orderId) {
-        const card = document.getElementById(orderId);
-        const targetBody = document.querySelector('#col-siap .kanban-body');
-        
-        card.style.opacity = '0.5';
-        setTimeout(() => {
-            targetBody.appendChild(card);
-            card.style.opacity = '1';
-
-            // Hapus class Processing & Tambah class Ready
-            card.classList.remove('status-processing');
-            card.classList.add('status-ready');
-
-            const timerBadge = card.querySelector('.order-timer');
-            timerBadge.innerHTML = '<i class="fas fa-paper-plane"></i> Sedang Dikirim';
-            timerBadge.style.color = '#3498db';
-            timerBadge.style.background = 'rgba(52, 152, 219, 0.1)';
-
-            const actionContainer = document.getElementById(`action-${orderId.split('-')[1]}`);
-            actionContainer.innerHTML = `
-                <button class="btn-kanban" onclick="kirimPesanan('${orderId}')" style="background-color: #27ae60; color: white;">
-                    <i class="fas fa-check-circle"></i> Pesanan Selesai
-                </button>
-            `;
-
-            updateCounters();
-        }, 200);
-    }
-
-    // 6. AKSI KANBAN: SELESAIKAN TRANSAKSI
-    function kirimPesanan(orderId) {
-        const card = document.getElementById(orderId);
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(-20px)';
-        setTimeout(() => {
-            card.remove();
-            updateCounters();
-        }, 300);
-    }
+        localStorage.setItem('vyb_pending_orders_count', currentPendingCount);
+        setTimeout(() => { window.location.reload(); }, 30000);
+    });
 </script>
+
+<style>
+/* CSS SUPER KANBAN DARK (Tetap dipertahankan) */
+*,*::before,*::after{box-sizing:border-box}
+.pesanan-baru-container{padding:20px 28px;color:#fff;animation:fi .4s ease;height: 100vh;}
+@keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.text-white-force { color: #ffffff !important; font-weight: 700 !important; opacity: 1 !important; text-shadow: 0 0 1px rgba(255,255,255,0.2); }
+.kanban-board{display:grid;grid-template-columns:repeat(3, 1fr);gap:20px;height:calc(100vh - 120px);}
+.kanban-column{background:#0d0d0d;border:1px solid #1a1a1a;border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
+.kanban-header{padding:15px 20px;background:#111;border-bottom:2px solid #D4A373;display:flex;justify-content:space-between;align-items:center}
+.kanban-header h3{margin:0;font-size:14px;text-transform:uppercase;letter-spacing:1px;font-weight:800;color:#fff}
+.order-count{background:rgba(212,163,115,.1);color:#D4A373;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+.kanban-body{padding:15px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:15px}
+.kanban-body::-webkit-scrollbar{width:4px}
+.kanban-body::-webkit-scrollbar-thumb{background:#333;border-radius:10px}
+.receipt-card{background:#111;border:1px solid #222;border-radius:10px;padding:15px;box-shadow:0 4px 10px rgba(0,0,0,.2);border-left:4px solid #D4A373;transition:.3s; animation: munculCard .5s ease;}
+@keyframes munculCard { from{opacity:0; transform:scale(0.95)} to{opacity:1; transform:scale(1)} }
+.receipt-card.status-processing{border-left-color:#f59e0b}
+.receipt-card.status-ready{border-left-color:#10b981; opacity: 0.7;}
+.receipt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;border-bottom:1px dashed #333;padding-bottom:10px}
+.order-id{font-family:monospace;font-weight:bold;font-size:14px;color:#D4A373}
+.order-timer{font-size:11px;color:#888;display:flex;align-items:center;gap:4px}
+.receipt-customer{font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.item-row{display:flex;gap:10px;font-size:13px;margin-bottom:5px}
+.item-qty{font-weight:700}
+.aksi-buttons{display:flex;gap:10px;margin-top:15px;padding-top:15px;border-top:1px dashed #333}
+.btn-terima{flex:1;background:#D4A373;color:#111;border:none;padding:8px;border-radius:6px;font-size:12px;font-weight:bold;cursor:pointer;transition:.2s}
+.btn-terima:hover{opacity:0.8}
+
+/* MODAL KHUSUS KANBAN */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:9999}
+.modal-overlay.show{display:flex}
+.modal-box{background:#111;border:1px solid #333;width:90%;max-width:400px;border-radius:12px;overflow:hidden;animation:pop .3s ease}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-head{padding:15px 20px;border-bottom:1px solid #222;display:flex;justify-content:space-between;align-items:center}
+.modal-body{padding:20px}
+.btn-close{background:none;border:none;color:#fff;font-size:24px;cursor:pointer}
+
+/* TOAST KDS NOTIFIKASI */
+.kds-toast-box { position: fixed; top: 30px; right: -350px; background: #D4A373; color: #111; padding: 15px 25px; border-radius: 12px; font-weight: bold; font-size: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 15px; transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; }
+.kds-toast-box.show { right: 30px; }
+.ringing-bell { animation: ring 1s ease-in-out infinite; }
+@keyframes ring { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(15deg); } 75% { transform: rotate(-15deg); } }
+</style>
 @endsection

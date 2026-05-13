@@ -51,12 +51,14 @@
 
         <div class="tentang-cards-container">
             <div class="tentang-card">
-                <h3>Cerita Kami</h3>
-                <p>Berawal dari kecintaan terhadap specialty coffee, kami menghadirkan biji pilihan dan proses terbaik untuk menciptakan pengalaman kopi yang autentik, konsisten, dan berkelas di setiap sajian.</p>
+                {{-- UPDATE: Judul dan Teks jadi dinamis --}}
+                <h3>{{ $cms['tentang_card_1_title'] ?? 'Cerita Kami' }}</h3>
+                <p>{{ $cms['tentang_cerita_1'] ?? 'Berawal dari kecintaan terhadap specialty coffee, kami menghadirkan biji pilihan dan proses terbaik untuk menciptakan pengalaman kopi yang autentik, konsisten, dan berkelas di setiap sajian.' }}</p>
             </div>
             <div class="tentang-card">
-                <h3>Cerita Kami</h3>
-                <p>Kami percaya kopi bukan sekadar minuman, melainkan pengalaman. Melalui seleksi biji terbaik dan proses yang presisi, kami menghadirkan kualitas dan cita rasa yang dapat dinikmati oleh setiap penikmat kopi sejati.</p>
+                {{-- UPDATE: Judul dan Teks jadi dinamis --}}
+                <h3>{{ $cms['tentang_card_2_title'] ?? 'Cerita Kami' }}</h3>
+                <p>{{ $cms['tentang_cerita_2'] ?? 'Kami percaya kopi bukan sekadar minuman, melainkan pengalaman. Melalui seleksi biji terbaik dan proses yang presisi, kami menghadirkan kualitas dan cita rasa yang dapat dinikmati oleh setiap penikmat kopi sejati.' }}</p>
             </div>
         </div>
     </section>

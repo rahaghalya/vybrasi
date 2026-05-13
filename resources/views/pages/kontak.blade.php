@@ -59,24 +59,42 @@
         <div class="kontak-card">
             <h2>Sapa Kami di Sini</h2>
             <hr class="kontak-divider">
-            <p class="form-subtitle">"Tuangkan inspirasi dalam cangkirmu, mulai dengan menyapa kami di sini."</p>
+            <p class="form-subtitle">"Tuangkan inspirasi dalam cangkirmu, berikan kesan dan pengalamanmu bersama kami."</p>
             
-            <form action="#" method="POST" class="kontak-form">
+            {{-- FORM TESTIMONI TERINTEGRASI --}}
+            <form action="{{ route('testimoni.store') }}" method="POST" class="kontak-form">
                 @csrf
+                {{-- Data Tersembunyi agar lolos validasi backend tanpa error --}}
+                <input type="hidden" name="jenis_ulasan" value="testimoni">
+                <input type="hidden" name="invoice" value="INV-GUEST-KONTAK">
+                <input type="hidden" name="tanggal" value="{{ date('Y-m-d') }}">
+
                 <div class="form-left">
                     <div class="form-group">
-                        <label>Nama</label>
-                        <input type="text" placeholder="Masukan nama anda">
+                        <label>Nama <span style="color:red;">*</span></label>
+                        <input type="text" name="nama" value="{{ auth()->check() ? auth()->user()->full_name : '' }}" required placeholder="Masukan nama anda">
                     </div>
                     <div class="form-group">
                         <label>Email</label>
-                        <input type="email" placeholder="Masukan email anda">
+                        <input type="email" name="email" placeholder="Masukan email anda">
+                    </div>
+                    
+                    {{-- Rating Bintang diselipkan dengan rapi --}}
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>Penilaian Anda <span style="color:red;">*</span></label>
+                        <div class="star-rating-kontak">
+                            <input type="radio" id="ks5" name="rating" value="5" required><label for="ks5">★</label>
+                            <input type="radio" id="ks4" name="rating" value="4"><label for="ks4">★</label>
+                            <input type="radio" id="ks3" name="rating" value="3"><label for="ks3">★</label>
+                            <input type="radio" id="ks2" name="rating" value="2"><label for="ks2">★</label>
+                            <input type="radio" id="ks1" name="rating" value="1"><label for="ks1">★</label>
+                        </div>
                     </div>
                 </div>
                 <div class="form-right">
-                    <div class="form-group">
-                        <label>Pesan</label>
-                        <textarea placeholder="Tuliskan pesan anda untuk kami..."></textarea>
+                    <div class="form-group h-100">
+                        <label>Pesan / Kesan <span style="color:red;">*</span></label>
+                        <textarea name="ulasan_teks" required placeholder="Tuliskan pengalaman atau pesan anda untuk kami..." style="height: 100%; min-height: 150px;"></textarea>
                     </div>
                 </div>
                 <div class="form-submit">
@@ -87,4 +105,31 @@
     </div>
 
 </div>
+
+{{-- TOAST NOTIFICATION --}}
+<div id="custom-toast" class="custom-toast" style="display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #28a745; color: white; padding: 12px 25px; border-radius: 30px; box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3); z-index: 10000; font-weight: bold; align-items: center; gap: 8px;">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toast-message">Pesan notifikasi di sini.</span>
+</div>
+
+<style>
+    /* CSS Tambahan Khusus Bintang di Halaman Kontak */
+    .star-rating-kontak { display: flex; flex-direction: row-reverse; justify-content: flex-end; }
+    .star-rating-kontak input { display: none; }
+    .star-rating-kontak label { color: #e0e0e0; font-size: 30px; cursor: pointer; padding: 0 3px; transition: .2s; }
+    .star-rating-kontak input:checked ~ label, .star-rating-kontak label:hover, .star-rating-kontak label:hover ~ label { color: #FFD700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.4); }
+    .h-100 { height: 100%; display: flex; flex-direction: column; }
+</style>
+
+<script>
+    // Memunculkan alert sukses jika dikirim
+    @if(session('success'))
+        document.addEventListener('DOMContentLoaded', function() {
+            const toast = document.getElementById('custom-toast');
+            document.getElementById('toast-message').textContent = "{{ session('success') }}";
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 4000);
+        });
+    @endif
+</script>
 @endsection
