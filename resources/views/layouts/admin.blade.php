@@ -8,14 +8,36 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        /* --- SIDEBAR LOGIC (Tetap dengan fitur Logo Fixed) --- */
+        /* --- KUNCI UTAMA: LAYOUT FLEXBOX --- */
+        .admin-container {
+            display: flex;
+            align-items: flex-start; /* Wajib agar elemen Sticky berfungsi */
+            min-height: 100vh;
+            width: 100%;
+            background: #0a0a0a;
+        }
+
+        /* --- SIDEBAR (STICKY: DIAM DI TEMPAT) --- */
         .sidebar {
+            position: -webkit-sticky;
             position: sticky;
             top: 0;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            background: #0d0d0d;
+            background: #0d0d0d !important; /* Paksa warna hitam pekat */
+            z-index: 999;
+            flex-shrink: 0; /* Cegah sidebar menciut */
+            transition: transform 0.3s ease;
+        }
+
+        /* --- KONTEN UTAMA --- */
+        .main-content {
+            flex: 1; /* Ambil sisa ruang layar secara otomatis */
+            min-width: 0; /* Wajib! Mencegah tabel panjang merusak layout */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .brand {
@@ -35,7 +57,7 @@
         }
         #sidebar-scroll-area::-webkit-scrollbar { display: none; }
 
-        /* --- KEMBALI KE STYLING LAMA BOSKU --- */
+        /* --- STYLING NAVIGASI --- */
         .nav-menu { display: flex; flex-direction: column; margin-top: 10px; }
         .nav-item { 
             padding: 12px 25px; 
@@ -91,11 +113,59 @@
         .dropdown-item:hover, .dropdown-item.active { color: #D4A373; }
         .arrow-icon { font-size: 10px !important; transition: transform 0.3s; }
         .dropdown-btn.open .arrow-icon { transform: rotate(180deg); }
+
+        /* --- SIHIR CSS RESPONSIVE KHUSUS MOBILE --- */
+        .mobile-header-actions { display: none; align-items: center; gap: 15px; margin-right: 15px;}
+        .btn-hamburger {
+            background: transparent;
+            border: none;
+            color: #D4A373;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(3px);
+            z-index: 9998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .top-header { display: flex; align-items: center; padding: 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.02);}
+
+        @media (max-width: 768px) {
+            /* Sembunyikan sidebar ke kiri luar layar */
+            .sidebar {
+                position: fixed; /* Berubah jadi melayang khusus di HP */
+                width: 280px;
+                transform: translateX(-100%);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+                box-shadow: 5px 0 25px rgba(0,0,0,0.8);
+            }
+            .sidebar-overlay.mobile-open {
+                display: block;
+                opacity: 1;
+            }
+            .mobile-header-actions {
+                display: flex;
+            }
+            .top-header { padding: 15px 15px 0 15px; border-bottom: none; }
+        }
     </style>
 </head>
 <body>
     <div class="admin-container">
-        <aside class="sidebar">
+        
+        {{-- LAYAR GELAP TRANSPARAN UNTUK MOBILE --}}
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
+        <aside class="sidebar" id="main-sidebar">
             {{-- LOGO DIPERBESAR --}}
             <div class="brand">
                 <img src="{{ asset('images/logo.png') }}" alt="VYBRASI" style="max-height: 75px; width: auto; object-fit: contain;">
@@ -117,12 +187,10 @@
                 </div>
 
                 <nav class="nav-menu">
-                    {{-- MENU LAMA KEMBALI SEPERTI SEMULA --}}
                     <a href="{{ route('admin.beranda') }}" class="nav-item {{ request()->routeIs('admin.beranda') ? 'active' : '' }}">
                         <i class="fas fa-home"></i> Beranda
                     </a>
                     
-                    {{-- Pesanan Baru & KDS --}}
                     <a href="{{ route('admin.pesanan_baru') }}" class="nav-item {{ request()->routeIs('admin.pesanan_baru') ? 'active' : '' }}">
                        <i class="fas fa-cart-plus"></i> Pesanan Baru (KDS)
                        @php $pc = \Illuminate\Support\Facades\DB::table('jualan_kopi.transaksi')->where('status', 'pending')->count(); @endphp
@@ -145,7 +213,6 @@
                        <i class="fas fa-shipping-fast"></i> Pengiriman
                     </a>
 
-                    {{-- DROPDOWN KELOLA WEB (CMS) --}}
                     <div class="dropdown-wrapper">
                         <div class="nav-item dropdown-btn" onclick="toggleDropdown('cms-drop')">
                             <div style="display:flex; align-items:center; gap:12px;">
@@ -180,7 +247,13 @@
 
         <main class="main-content">
             <header class="top-header">
-                <h2>@yield('title')</h2>
+                {{-- TOMBOL HAMBURGER MUNCUL DI SINI SAAT DI HP --}}
+                <div class="mobile-header-actions">
+                    <button class="btn-hamburger" onclick="toggleMobileSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <h2 style="margin: 0;">@yield('title')</h2>
             </header>
 
             <section class="content-body">
@@ -190,17 +263,19 @@
     </div>
 
     <script>
-        // --- 1. DROPDOWN LOGIC ---
+        function toggleMobileSidebar() {
+            document.getElementById('main-sidebar').classList.toggle('mobile-open');
+            document.getElementById('sidebar-overlay').classList.toggle('mobile-open');
+        }
+
         function toggleDropdown(id) {
             const drop = document.getElementById(id);
             const btn = drop.previousElementSibling;
             drop.classList.toggle('show');
             btn.classList.toggle('open');
-            // Simpan status buka/tutup ke LocalStorage
             localStorage.setItem(id, drop.classList.contains('show'));
         }
 
-        // --- 2. PERSIST DROPDOWN STATE ---
         window.addEventListener('load', () => {
             if (localStorage.getItem('cms-drop') === 'true') {
                 const drop = document.getElementById('cms-drop');
@@ -209,22 +284,17 @@
             }
         });
 
-        // --- 3. SCROLL PERSISTENCE LOGIC ---
         const scrollArea = document.getElementById('sidebar-scroll-area');
-        
-        // Simpan posisi scroll saat digulir
         scrollArea.addEventListener('scroll', () => {
             localStorage.setItem('sidebar_scroll_pos', scrollArea.scrollTop);
         });
 
-        // Kembalikan posisi scroll saat halaman dimuat
         document.addEventListener("DOMContentLoaded", function() {
             const savedPos = localStorage.getItem('sidebar_scroll_pos');
             if (savedPos) {
                 scrollArea.scrollTop = savedPos;
             }
 
-            // Update badge pesan dari localStorage
             let unreadCount = localStorage.getItem('vyb_unread_count');
             let badge = document.getElementById('sidebar-pesan-badge');
             if (badge && unreadCount && parseInt(unreadCount) > 0) {

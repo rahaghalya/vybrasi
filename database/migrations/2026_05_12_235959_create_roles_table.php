@@ -9,14 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up(): void
-{
-    Schema::create('roles', function (Blueprint $table) {
-        $table->id(); // Membuat kolom id (PK)
-        $table->string('role_name'); // Membuat kolom role_name
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::create('roles', function (Blueprint $table) {
+            $table->id();
+
+            $table->string('role_name')->unique();
+
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

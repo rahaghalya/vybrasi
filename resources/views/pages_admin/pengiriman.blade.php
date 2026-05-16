@@ -10,9 +10,9 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
     <h2 class="page-title">LIST PENGIRIMAN PAKET</h2>
 
     <div class="kpi-row">
-        <div class="kpi amber-bar"><div class="kpi-ic amber"><i class="fa-solid fa-box"></i></div><div><p class="kpi-lbl">Siap Kirim</p><h3>{{ $countSiap }} <span class="unit">Pesanan</span></h3></div></div>
-        <div class="kpi blue-bar"><div class="kpi-ic blue"><i class="fa-solid fa-truck-fast"></i></div><div><p class="kpi-lbl">Dalam Perjalanan</p><h3>{{ $countJalan }} <span class="unit">Paket</span></h3></div></div>
-        <div class="kpi green-bar"><div class="kpi-ic green"><i class="fa-solid fa-house-chimney-check"></i></div><div><p class="kpi-lbl">Tiba di Tujuan</p><h3>{{ $countTiba }} <span class="unit">Selesai</span></h3></div></div>
+        <div class="kpi amber-bar"><div class="kpi-ic amber"><i class="fa-solid fa-box"></i></div><div><p class="kpi-lbl">Siap Kirim</p><h3>{{ $countSiap ?? 0 }} <span class="unit">Pesanan</span></h3></div></div>
+        <div class="kpi blue-bar"><div class="kpi-ic blue"><i class="fa-solid fa-truck-fast"></i></div><div><p class="kpi-lbl">Dalam Perjalanan</p><h3>{{ $countJalan ?? 0 }} <span class="unit">Paket</span></h3></div></div>
+        <div class="kpi green-bar"><div class="kpi-ic green"><i class="fa-solid fa-house-chimney-check"></i></div><div><p class="kpi-lbl">Tiba di Tujuan</p><h3>{{ $countTiba ?? 0 }} <span class="unit">Selesai</span></h3></div></div>
     </div>
 
     <div class="toolbar mt-18">
@@ -30,39 +30,50 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
     </div>
 
     <div class="card mt-18">
-        <table class="dtable">
-            <thead>
-                <tr><th>Invoice</th><th>Penerima</th><th>Alamat Tujuan</th><th>Status</th><th>Aksi</th></tr>
-            </thead>
-            <tbody>
-                @forelse ($allPengiriman as $p)
-                @php
-                    $penerima = 'User'; $alamat = '-';
-                    if (preg_match('/Penerima:\s*([^|]+)/', $p->catatan, $m)) $penerima = trim($m[1]);
-                    if (preg_match('/Alamat:\s*(.+)/', $p->catatan, $m)) $alamat = trim($m[1]);
-                @endphp
-                <tr>
-                    <td><span class="mono">{{ $p->no_invoice }}</span></td>
-                    <td class="fw text-white-force">{{ $penerima }}</td>
-                    <td class="mu" style="max-width: 250px; line-height: 1.4;">{{ Str::limit($alamat, 60) }}</td>
-                    <td>
-                        @if($p->status == 'pending') <span class="bdg warn">Siap Kirim</span>
-                        @elseif($p->status == 'shipped') <span class="bdg info">Dikirim</span>
-                        @else <span class="bdg succ">Tiba</span> @endif
-                    </td>
-                    <td>
-                        {{-- Simpan html barcode tersembunyi agar bisa dilempar ke Javascript Modal --}}
-                        <div id="barcode-html-{{ $p->id_transaksi }}" style="display:none;">{!! DNS1D::getBarcodeHTML($p->no_invoice, 'C39', 1.5, 30) !!}</div>
-                        <button type="button" class="btn-ol" onclick="openEditModal('{{ $p->id_transaksi }}', '{{ $p->no_invoice }}', '{{ $penerima }}', '{{ $alamat }}', '{{ $p->status }}')">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                    </td>
-                </tr>
-                @empty
-                <tr><td colspan="5" class="empty">Tidak ada pengiriman aktif.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+        <div style="overflow-x: auto;"> {{-- Tambahan agar tabel bisa di-scroll ke samping kalau layar kekecilan --}}
+            <table class="dtable">
+                <thead>
+                    <tr><th>Invoice</th><th>Penerima</th><th>Alamat Tujuan</th><th>Status</th><th>Aksi</th></tr>
+                </thead>
+                <tbody>
+                    @forelse ($allPengiriman as $p)
+                    @php
+                        $penerima = 'User'; $alamat = '-';
+                        if (preg_match('/Penerima:\s*([^|]+)/', $p->catatan, $m)) $penerima = trim($m[1]);
+                        if (preg_match('/Alamat:\s*(.+)/', $p->catatan, $m)) $alamat = trim($m[1]);
+                    @endphp
+                    <tr>
+                        <td style="white-space: nowrap;"><span class="mono">{{ $p->no_invoice }}</span></td>
+                        <td class="fw text-white-force" style="white-space: nowrap;">{{ $penerima }}</td>
+                        <td class="mu" style="min-width: 250px; line-height: 1.4;">{{ Str::limit($alamat, 60) }}</td>
+                        <td style="white-space: nowrap;">
+                            @if($p->status == 'pending') <span class="bdg warn">Siap Kirim</span>
+                            @elseif($p->status == 'shipped') <span class="bdg info">Dikirim</span>
+                            @else <span class="bdg succ">Tiba</span> @endif
+                        </td>
+                        
+                        <td style="white-space: nowrap;">
+                            <div id="barcode-img-{{ $p->id_transaksi }}" style="display:none;">
+                                <img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($p->no_invoice, 'C128', 1.5, 40) }}" alt="barcode" style="max-width: 100%;">
+                            </div>
+
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <button type="button" class="btn-ol" onclick="openEditModal('{{ $p->id_transaksi }}', '{{ $p->no_invoice }}', '{{ $penerima }}', '{{ $alamat }}', '{{ $p->status }}')">
+                                    <i class="fas fa-edit"></i> Update
+                                </button>
+                                
+                                <a href="{{ route('admin.pengiriman.cetak_resi', $p->id_transaksi) }}" target="_blank" class="btn-ol" style="border-color: #3b82f6; color: #3b82f6; text-decoration: none;">
+                                    <i class="fas fa-print"></i> Resi
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="5" class="empty">Tidak ada pengiriman aktif.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -80,7 +91,6 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
                     <p>Tujuan: <strong id="m-penerima"></strong></p>
                     <p class="mu" id="m-alamat" style="font-size: 12px; margin-bottom: 10px;"></p>
                     
-                    {{-- AREA BARCODE DI DALAM MODAL --}}
                     <div style="background: #fff; padding: 10px; text-align: center; border-radius: 6px;">
                         <div id="m-barcode-container" style="display: inline-block;"></div>
                     </div>
@@ -125,10 +135,13 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
 .kpi h3{margin:0;font-size:19px;font-weight:800} .unit{font-size:12px;color:#666}
 .card{background:#111;border:1px solid #1e1e1e;border-radius:12px;overflow:hidden}
 .dtable{width:100%;border-collapse:collapse}
-.dtable th{background:#0d0d0d;color:#D4A373;font-size:11px;font-weight:700;text-transform:uppercase;padding:15px 20px;text-align:left;border-bottom:1px solid #1a1a1a}
+.dtable th{background:#0d0d0d;color:#D4A373;font-size:11px;font-weight:700;text-transform:uppercase;padding:15px 20px;text-align:left;border-bottom:1px solid #1a1a1a; white-space: nowrap;}
 .dtable td{padding:15px 20px;border-bottom:1px solid #161616;font-size:14px;vertical-align:middle}
-.mono{background:#0a0a0a;border:1px solid #333;padding:4px 8px;border-radius:6px;font-family:monospace;color:#D4A373}
-.bdg{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700}
+
+/* FIX UNTUK INVOICE DAN BADGE AGAR TIDAK PATAH */
+.mono{background:#0a0a0a;border:1px solid #333;padding:4px 8px;border-radius:6px;font-family:monospace;color:#D4A373; white-space: nowrap; display: inline-block;}
+.bdg{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700; white-space: nowrap; display: inline-block;}
+
 .warn{background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
 .info{background:rgba(59,130,246,.1);color:#3b82f6;border:1px solid rgba(59,130,246,.2)}
 .succ{background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.2)}
@@ -168,9 +181,8 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
         document.getElementById('m-penerima').innerText = nama;
         document.getElementById('m-alamat').innerText = alamat;
         
-        // Panggil barcode dari div yang tersembunyi
-        let barcodeHtml = document.getElementById('barcode-html-' + id_transaksi).innerHTML;
-        document.getElementById('m-barcode-container').innerHTML = barcodeHtml;
+        let barcodeImgHtml = document.getElementById('barcode-img-' + id_transaksi).innerHTML;
+        document.getElementById('m-barcode-container').innerHTML = barcodeImgHtml;
 
         let setStatus = status === 'pending' ? 'shipped' : status;
         pilihStatus(setStatus);

@@ -414,149 +414,118 @@ footer {
 
 
 /* =========================================
-   HALAMAN BERANDA (PREMIUM COLOR ONLY)
+   HALAMAN BERANDA (VYBRASI ULTRA PREMIUM)
    ========================================= */
 
+/* Efek Muncul saat Scroll */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+    0% { transform: translateY(-50%) translateX(0px); }
+    50% { transform: translateY(-55%) translateX(10px); }
+    100% { transform: translateY(-50%) translateX(0px); }
+}
+
+.hero, .tentang, .unggulan, .testimonial-section {
+    animation: fadeInUp 1s ease-out forwards;
+}
+
+/* --- HERO SECTION --- */
 .hero { 
-    padding: 60px 5%; 
+    padding: 80px 5%; 
     display: flex; 
     justify-content: center; 
-    position: relative; 
-    background-color: #1B1616; /* Latar belakang Espresso Gelap */
+    background-color: #120F0F;
 }
 
 .hero-card { 
-    background: linear-gradient(135deg, #2C211D 0%, #14100E 70%, #2A1D16 100%);
+    background: linear-gradient(135deg, #1e1614 0%, #0d0a09 100%);
     width: 100%; 
-    max-width: 1500px;
-    height: 350px; 
-    border-radius: 20px; 
+    max-width: 1400px;
+    height: 450px; 
+    border-radius: 30px; 
     display: flex; 
     align-items: center; 
-    padding: 0 60px; 
+    padding: 0 80px; 
     position: relative; 
-    overflow: visible; /* Penting agar cipratan kopi bisa menembus batas card */
-    
-    /* Box shadow dan border yang sudah dirapikan */
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 10px 20px rgba(0, 0, 0, 0.4); 
-    border: 1px solid rgba(212, 163, 115, 0.15); 
+    overflow: visible; 
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8); 
+    border: 1px solid rgba(212, 163, 115, 0.1); 
 }
 
 .hero-text { 
-    flex: 1; /* Dibuat fleksibel agar bisa mengambil area lebih luas */
-    max-width: 80%; /* Mengizinkan teks memanjang ke area kanan (area gambar) */
-    position: relative;
-    z-index: 2; /* Memastikan seluruh teks dan tombol berada di DEPAN gambar */
+    flex: 1; 
+    max-width: 650px;
+    z-index: 5; 
 }
 
 .hero-text h1 { 
     font-family: 'Times New Roman', serif; 
-    font-size: 42px; 
+    font-size: 52px; 
     font-weight: 700; 
-    margin-bottom: 15px; 
-    line-height: 1.2; 
+    margin-bottom: 20px; 
+    line-height: 1.1; 
     color: #F2EBE1; 
-    max-width: 700px; /* Lebar dibatasi agar otomatis turun menjadi 2 baris */
-    text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.8); /* Tambahan shadow agar teks tetap terbaca meski menumpuk di atas cipratan kopi */
+    text-shadow: 0 10px 20px rgba(0,0,0,0.5);
 }
 
 .hero-text p { 
     font-size: 18px; 
-    margin-bottom: 30px; 
-    font-weight: 500; 
+    margin-bottom: 40px; 
     color: #B5A8A0; 
-    text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.8);
+    letter-spacing: 0.5px;
 }
 
-/* --- KODE BARU UNTUK GAMBAR KOPI --- */
 .hero-image {
     position: absolute;
-    right: -20px; /* Atur angka ini untuk menggeser cangkir lebih ke kanan/kiri */
+    right: 30px; 
     top: 50%;
-    transform: translateY(-50%); /* Membuat gambar pas di tengah secara vertikal */
-    z-index: 1; /* Gambar berada di BELAKANG teks (karena teks z-index 2) */
-    pointer-events: none; /* Mencegah gambar memblokir klik pada tombol jika bertumpukan */
+    transform: translateY(-50%); 
+    z-index: 2; 
+    filter: drop-shadow(0 20px 50px rgba(0,0,0,0.9));
+    animation: float 5s ease-in-out infinite; 
 }
 
 .hero-image img {
-    height: 480px; /* Ukuran gambar diperbesar agar cipratan lebih dramatis */
+    height: 520px; 
     width: auto;
     object-fit: contain;
 }
 
+/* --- TOMBOL PREMIUM --- */
 .btn-ultra-premium {
-    position: relative;
-    /* Base gelap yang elegan menyatu dengan background card */
-    background: linear-gradient(145deg, #1C120C 0%, #291C16 100%); 
-    padding: 16px 40px;
-    border-radius: 50px; /* Bentuk pill/kapsul sangat identik dengan luxury design */
-    border: 1px solid rgba(212, 163, 115, 0.3); /* Border emas redup */
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 2px; /* Spasi huruf ekstra untuk kesan mahal */
+    padding: 18px 45px;
+    border-radius: 50px;
+    background: linear-gradient(145deg, #D4A373, #A67C52);
+    color: #1B1616 !important;
+    font-weight: 800;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    cursor: pointer;
-    overflow: hidden; /* Wajib untuk memotong animasi shimmer di dalam tombol */
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border: none;
+    box-shadow: 0 15px 30px rgba(212, 163, 115, 0.3);
+    transition: 0.4s;
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    
-    /* Double shadow: Shadow bawah gelap + Inner highlight tipis di atas */
-    box-shadow: 
-        0 15px 30px rgba(0, 0, 0, 0.6), 
-        inset 0 1px 1px rgba(255, 255, 255, 0.1); 
+    gap: 10px;
+    text-decoration: none;
 }
 
-/* Mengubah teks menjadi warna emas berkilau */
-.btn-ultra-premium span {
-    background: linear-gradient(to right, #C89657 0%, #F5DEB3 50%, #C89657 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    z-index: 2;
-}
-
-/* Efek Shimmer (Garis cahaya kemilau yang lewat saat di-hover) */
-.btn-ultra-premium::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%; /* Posisi awal di luar tombol sebelah kiri */
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(to right, transparent, rgba(245, 222, 179, 0.15), transparent);
-    transform: skewX(-25deg);
-    transition: left 0.7s ease;
-    z-index: 1;
-}
-
-/* Interaksi saat kursor menyentuh tombol */
 .btn-ultra-premium:hover {
-    border-color: #C89657; /* Border menyala saat hover */
-    transform: translateY(-3px);
-    box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.8), /* Bayangan makin dalam */
-        0 0 20px rgba(200, 150, 87, 0.15); /* Tambahan glow emas di sekeliling tombol */
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 20px 40px rgba(212, 163, 115, 0.5);
+    background: #F2EBE1;
 }
 
-/* Menjalankan animasi cahaya kilap */
-.btn-ultra-premium:hover::before {
-    left: 150%; /* Cahaya bergerak ke kanan menembus tombol */
-}
-
-.btn-ultra-premium:active {
-    transform: translateY(0);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
-}
-
-
+/* --- TENTANG SECTION --- */
 .tentang { 
+    background-color: #120F0F;
+    padding: 100px 8%;
     display: flex; 
-    padding: 80px 5%; 
     gap: 50px; 
     align-items: center; 
-    background-color: #1B1616; /* Latar belakang Espresso */
 }
 
 .tentang-images { 
@@ -571,12 +540,12 @@ footer {
     position: absolute; 
     width: 300px; 
     height: 400px; 
-    background-color: #D4A373; /* Warna Blob Karamel */
+    background-color: #D4A373; 
     border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; 
     z-index: 0; 
     top: -20px; 
     left: 20px; 
-    opacity: 0.15; /* Transparansi agar elegan */
+    opacity: 0.15; 
 }
 
 .tentang-images img { 
@@ -585,21 +554,17 @@ footer {
     box-shadow: 0 15px 30px rgba(0,0,0,0.6); 
     z-index: 1; 
     object-fit: cover; 
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    transition: 0.5s;
 }
 
-.img-top { 
-    width: 200px; 
-    height: 250px; 
-    top: 20px; 
-    left: 0; 
+.tentang-images img:hover {
+    transform: scale(1.05) rotate(2deg);
+    z-index: 10;
 }
 
-.img-bottom { 
-    width: 250px; 
-    height: 180px; 
-    bottom: 20px; 
-    right: 20px; 
-}
+.img-top { width: 200px; height: 250px; top: 20px; left: 0; }
+.img-bottom { width: 250px; height: 180px; bottom: 20px; right: 20px; }
 
 .tentang-text { 
     flex: 1; 
@@ -609,21 +574,23 @@ footer {
 
 .tentang-text h2 { 
     font-family: 'Times New Roman', serif; 
-    font-size: 38px; 
+    font-size: 45px; 
     margin-bottom: 20px; 
-    color: #D4A373; /* Judul Karamel */
     font-weight: 700; 
+    background: linear-gradient(to right, #D4A373, #F2EBE1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .tentang-text p { 
     font-size: 15px; 
-    color: #B5A8A0; /* Teks Warm Gray */
+    color: #B5A8A0; 
     margin-bottom: 30px; 
     line-height: 1.7; 
 }
 
 .btn-orange { 
-    background-color: #D4A373; /* Tombol Karamel */
+    background-color: #D4A373; 
     color: #1B1616; 
     padding: 12px 35px; 
     border-radius: 8px; 
@@ -634,182 +601,88 @@ footer {
     box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
 }
 
-.btn-orange:hover { 
-    background-color: #F2EBE1; /* Hover Ivory */
-    transform: translateY(-2px); 
-}
+.btn-orange:hover { background-color: #F2EBE1; transform: translateY(-2px); }
 
-.section-header { 
-    text-align: center; 
-    margin-bottom: 50px; 
-}
+.section-header { text-align: center; margin-bottom: 50px; }
+.section-header h2 { font-family: 'Times New Roman', serif; font-size: 38px; margin-bottom: 10px; color: #F2EBE1; font-weight: 700; }
+.section-header p { color: #B5A8A0; font-size: 16px; font-weight: 500; }
 
-.section-header h2 { 
-    font-family: 'Times New Roman', serif; 
-    font-size: 38px; 
-    margin-bottom: 10px; 
-    color: #F2EBE1; /* Judul Ivory */
-    font-weight: 700; 
-}
-
-.section-header p { 
-    color: #B5A8A0; /* Deskripsi Warm Gray */
-    font-size: 16px; 
-    font-weight: 500; 
-}
-
-.produk { 
-    padding: 60px 5%; 
-    background-color: #1B1616; /* Latar belakang Espresso */
-}
-
-.produk-grid { 
-    display: grid; 
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 30px; 
-}
-
-.produk-card { 
-    background-color: #FAF9F6; /* Background kartu Warm Ivory (Bukan putih murni) */
-    border-radius: 15px; 
-    overflow: hidden; 
-    box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
-    transition: transform 0.3s; 
-}
-
-.produk-card:hover { 
-    transform: translateY(-5px); 
-}
-
-.produk-img-placeholder { 
-    height: 200px; 
-    background-color: #E8DFC9; /* Background krem */
-    /* Pola kotak dipertahankan, tapi warnanya diganti ke soft latte */
-    background-image: linear-gradient(45deg, rgba(163, 126, 92, 0.1) 25%, transparent 25%), 
-                      linear-gradient(45deg, transparent 75%, rgba(163, 126, 92, 0.1) 75%), 
-                      linear-gradient(45deg, transparent 75%, rgba(163, 126, 92, 0.1) 75%), 
-                      linear-gradient(45deg, rgba(163, 126, 92, 0.1) 25%, #E8DFC9 25%); 
-    background-size: 20px 20px; 
-    background-position: 0 0, 0 0, -10px -10px, 10px 10px; 
-}
-
-.produk-img-placeholder img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: cover; 
-}
-
-.produk-info { 
-    background: linear-gradient(135deg, #F2EBE1, #E8DFC9); /* Gradasi Latte ke Cream */
-    color: #1B1616; 
-    text-align: center; 
-    padding: 25px 20px; 
-}
-
-.produk-info h3 { 
-    font-family: 'Times New Roman', serif; 
-    font-weight: 700; 
-    font-size: 22px; 
-    margin-bottom: 15px; 
-    color: #1B1616; 
-}
-
-.btn-brown-sm { 
-    background-color: #1B1616; 
-    color: #D4A373; /* Teks Karamel */
-    padding: 10px 25px; 
-    text-decoration: none; 
-    border-radius: 8px; 
-    font-weight: 600; 
-    font-size: 14px; 
-    display: inline-block; 
-    transition: 0.3s; 
-}
-
-.btn-brown-sm:hover { 
-    background-color: #D4A373; 
-    color: #1B1616; 
-}
-
+/* --- UNGGULAN (GLASSMORPHISM CARDS) --- */
 .unggulan { 
-    padding: 60px 5%; 
-    background-color: #1B1616; /* Latar belakang Espresso */
+    padding: 100px 5%; 
+    background-color: #0D0A0A;
 }
 
 .unggulan-grid { 
     display: grid; 
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 30px; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 25px; 
 }
 
 .unggulan-card { 
-    background-color: #FAF9F6; /* Background kartu Warm Ivory */
-    border-radius: 15px; 
+    background: rgba(30, 22, 20, 0.4); 
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 163, 115, 0.1);
+    border-radius: 25px; 
     overflow: hidden; 
-    box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
-    transition: transform 0.3s; 
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .unggulan-card:hover { 
-    transform: translateY(-5px); 
+    transform: translateY(-15px); 
+    border-color: #D4A373;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
 }
 
 .unggulan-img-placeholder { 
-    height: 250px; 
-    background-color: #E8DFC9; 
-    /* Pola kotak dipertahankan, warna disesuaikan */
-    background-image: linear-gradient(45deg, rgba(163, 126, 92, 0.1) 25%, transparent 25%), 
-                      linear-gradient(45deg, transparent 75%, rgba(163, 126, 92, 0.1) 75%), 
-                      linear-gradient(45deg, transparent 75%, rgba(163, 126, 92, 0.1) 75%), 
-                      linear-gradient(45deg, rgba(163, 126, 92, 0.1) 25%, #E8DFC9 25%); 
-    background-size: 20px 20px; 
-    background-position: 0 0, 0 0, -10px -10px, 10px 10px; 
+    height: 280px; 
+    overflow: hidden;
+}
+
+.unggulan-img-placeholder img {
+    transition: 0.8s;
+}
+
+.unggulan-card:hover .unggulan-img-placeholder img {
+    transform: scale(1.15);
 }
 
 .unggulan-info { 
-    background: linear-gradient(135deg, #F2EBE1, #E8DFC9); /* Gradasi Latte ke Cream */
-    color: #1B1616; 
-    padding: 30px 25px; 
+    background: transparent;
+    padding: 25px; 
+    text-align: center;
 }
 
 .unggulan-info h3 { 
-    font-family: 'Times New Roman', serif; 
-    font-weight: 700; 
-    font-size: 24px; 
-    margin-bottom: 10px; 
-    color: #1B1616; 
-}
-
-.unggulan-info p { 
-    font-size: 14px; 
-    margin-bottom: 20px; 
-    line-height: 1.5; 
-    font-weight: 500; 
-    color: #4A3A36; /* Teks deskripsi gelap kecokelatan */
+    color: #F2EBE1; 
+    font-size: 22px;
+    margin-bottom: 20px;
+    font-family: 'Times New Roman', serif;
+    font-weight: 700;
 }
 
 .btn-brown { 
-    background-color: #1B1616; 
-    color: #D4A373; /* Teks Karamel */
-    padding: 12px; 
-    display: block; 
-    text-align: center; 
-    text-decoration: none; 
-    border-radius: 8px; 
-    font-weight: 600; 
-    transition: 0.3s; 
+    background: transparent;
+    border: 1px solid #D4A373;
+    color: #D4A373;
+    padding: 10px;
+    display: block;
+    text-align: center;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.3s;
 }
 
-.btn-brown:hover { 
-    background-color: #D4A373; 
-    color: #1B1616; 
+.btn-brown:hover {
+    background: #D4A373;
+    color: #1B1616;
 }
 
-/*SECTION TESTIMONI (DARK LUXURY CONCEPT)*/
-
+/* --- TESTIMONI SECTION --- */
 .testimonial-section {
     padding: 100px 5%;
-    background-color: #1B1616; /* Latar Espresso Gelap */
+    background-color: #1B1616;
 }
 
 .testi-grid {
@@ -817,13 +690,11 @@ footer {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 40px;
     justify-content: center;
-    margin-top: 50px;
 }
 
-/* Kotak Ulasan Mewah */
 .testi-card {
-    background: linear-gradient(145deg, #241A16 0%, #160F0C 100%);
-    border: 1px solid rgba(212, 163, 115, 0.15); /* Border emas sangat tipis */
+    background: linear-gradient(145deg, #1e1614 0%, #0d0a09 100%);
+    border: 1px solid rgba(212, 163, 115, 0.05);
     border-radius: 20px;
     padding: 45px 35px 40px;
     text-align: center;
@@ -831,79 +702,30 @@ footer {
     flex-direction: column;
     align-items: center;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: 0.5s;
 }
 
-/* Efek Glow & Mengambang saat Hover */
 .testi-card:hover {
     transform: translateY(-12px);
     border-color: rgba(212, 163, 115, 0.6);
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(212, 163, 115, 0.15);
 }
 
-/* Ikon Kutip Tengah */
-.quote-icon {
-    color: rgba(212, 163, 115, 0.25);
-    font-size: 32px;
-    margin-bottom: 15px;
-    transition: 0.5s;
-}
+.quote-icon { color: rgba(212, 163, 115, 0.25); font-size: 32px; margin-bottom: 15px; transition: 0.5s; }
+.testi-card:hover .quote-icon { color: #D4A373; transform: scale(1.1); }
+.testi-stars { color: #D4A373; font-size: 13px; margin-bottom: 25px; letter-spacing: 4px; }
+.testi-text { font-family: 'Times New Roman', serif; font-size: 16px; color: #F2EBE1; line-height: 1.8; font-style: italic; margin-bottom: 30px; flex-grow: 1; }
+.testi-separator { width: 40px; height: 2px; background-color: #D4A373; margin-bottom: 15px; border-radius: 2px; transition: width 0.5s ease; }
+.testi-card:hover .testi-separator { width: 80px; }
+.testi-author { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 700; color: #D4A373; text-transform: uppercase; letter-spacing: 1.5px; }
 
-.testi-card:hover .quote-icon {
-    color: #D4A373; /* Ikon menyala saat di-hover */
-    transform: scale(1.1);
-}
-
-/* Bintang Emas dengan Spasi Renggang */
-.testi-stars {
-    color: #D4A373;
-    font-size: 13px;
-    margin-bottom: 25px;
-    letter-spacing: 4px;
-}
-
-/* Teks Testimoni Bergaya Majalah Mewah */
-.testi-text {
-    font-family: 'Times New Roman', serif;
-    font-size: 16px;
-    color: #F2EBE1; /* Ivory terang */
-    line-height: 1.8;
-    font-style: italic;
-    margin-bottom: 30px;
-    flex-grow: 1; /* Mendorong nama penulis ke bawah agar semua kartu sejajar */
-}
-
-/* Garis Pemisah Elegan */
-.testi-separator {
-    width: 40px;
-    height: 2px;
-    background-color: #D4A373;
-    margin-bottom: 15px;
-    border-radius: 2px;
-    transition: width 0.5s ease;
-}
-
-.testi-card:hover .testi-separator {
-    width: 80px; /* Garis memanjang saat kartu disentuh */
-}
-
-/* Tipografi Penulis */
-.testi-author {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    color: #D4A373;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-}
-
-.testi-role {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 11px;
-    color: #8C7A70;
-    margin-top: 6px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .unggulan-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero-card { height: auto; padding: 60px 40px; }
+    .hero-image { display: none; }
+    .tentang { flex-direction: column; }
+    .tentang-images { height: 300px; min-height: 300px; }
 }
 
 

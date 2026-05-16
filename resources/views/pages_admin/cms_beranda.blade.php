@@ -1,5 +1,4 @@
 @extends('layouts.admin')
-@section('title', 'Kelola Beranda')
 @section('content')
 @include('pages_admin.partials.cms_style')
 <div style="padding: 5px 10px;">

@@ -55,30 +55,40 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
                 </tr>
             </thead>
             <tbody>
-                @forelse ($affiliates as $af)
+                @forelse ($affiliates as $aff)
                 <tr>
-                    <td>
-                        <span class="mono">AF-{{ strtoupper(substr($af->id, 0, 5)) }}</span>
+                    {{-- Menggunakan id --}}
+                    <td style="white-space: nowrap;"><span class="mono">{{ $aff->id }}</span></td>
+                    
+                    {{-- Menggunakan full_name --}}
+                    <td class="fw" style="white-space: nowrap;">{{ $aff->full_name }}</td>
+                    
+                    {{-- Menggunakan kode_unik sebagai Kode Referral --}}
+                    <td class="gold" style="font-size: 13px; white-space: nowrap;">
+                        @if($aff->kode_unik)
+                            <i class="fas fa-tag"></i> {{ $aff->kode_unik }}
+                        @else
+                            <span class="mu" style="font-size: 12px;">Belum ada kode</span>
+                        @endif
                     </td>
                     
-                    {{-- DIJAMIN PUTIH TERANG --}}
-                    <td class="text-white-force" style="font-size: 15px;">
-                        {{ $af->full_name ?? $af->username ?? $af->email ?? 'Nama Belum Diisi' }}
+                    {{-- Cek apakah status_affiliate bernilai 'active' --}}
+                    <td style="white-space: nowrap; text-align: center;">
+                        @if($aff->status_affiliate === 'active')
+                            <span class="bdg succ">Aktif</span>
+                        @else
+                            <span class="bdg warn">Nonaktif</span>
+                        @endif
                     </td>
                     
-                    {{-- DIJAMIN EMAS TERANG --}}
-                    <td class="text-gold-force" style="font-size: 14px;">
-                        <i class="fas fa-tag" style="font-size: 11px; margin-right: 6px; color: #888;"></i>{{ $af->kode_unik ?? 'Belum ada kode' }}
-                    </td>
-                    
-                    <td><span class="bdg succ">Aktif</span></td>
-                    <td>
-                        <a href="{{ route('admin.affiliate.profil', $af->id) }}" class="btn-ol">Lihat Profil</a>
+                    <td style="white-space: nowrap; text-align: center;">
+                        {{-- Tombol detail menggunakan id --}}
+                        <a href="{{ route('admin.affiliate.detail', $aff->id) }}" class="btn-ol">Lihat Detail</a>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="empty">Belum ada data mitra affiliate.</td>
+                    <td colspan="5" class="empty">Belum ada data mitra affiliate yang ditemukan.</td>
                 </tr>
                 @endforelse
             </tbody>

@@ -16,50 +16,57 @@
                         <i class="fa-brands fa-whatsapp"></i>
                         <h4>WhatsApp</h4>
                     </div>
-                    <p>083546795016</p>
+                    {{-- Tarik data WA dari CMS --}}
+                    <p>{{ $cms['kontak_wa'] ?? '083546795016' }}</p>
                 </div>
                 <div class="info-box">
                     <div class="info-box-header">
                         <i class="fa-regular fa-envelope"></i>
                         <h4>Email</h4>
                     </div>
-                    <p>vybrasi@gmail.com</p>
+                    {{-- Tarik data Email dari CMS --}}
+                    <p>{{ $cms['kontak_email'] ?? 'vybrasi@gmail.com' }}</p>
                 </div>
                 <div class="info-box">
                     <div class="info-box-header">
                         <i class="fa-solid fa-location-dot"></i>
                         <h4>Alamat</h4>
                     </div>
-                    <p>Jl. Example, No. 21, Surabaya</p>
+                    {{-- Tarik data Alamat dari CMS --}}
+                    <p>{{ $cms['kontak_alamat'] ?? 'Jl. Example, No. 21, Surabaya' }}</p>
                 </div>
                 <div class="info-box">
                     <div class="info-box-header">
                         <i class="fa-regular fa-clock"></i>
                         <h4>Operasional</h4>
                     </div>
-                    <p>Minggu – Kamis (16.00 – 23.00)<br>Jumat – Sabtu (16.00 – 00.00)</p>
+                    {{-- Tarik data Operasional dari CMS (Pakai {!! !!} agar tag <br> bisa terbaca) --}}
+                    <p>{!! $cms['kontak_operasional'] ?? 'Minggu – Kamis (16.00 – 23.00)<br>Jumat – Sabtu (16.00 – 00.00)' !!}</p>
                 </div>
             </div>
         </div>
         
         <div class="kontak-images-section">
             <div class="kontak-blob top-blob"></div>
-            <img src="{{ asset('images/interior.png') }}" class="k-img-1" alt="Cafe Interior">
-            <img src="{{ asset('images/barista.png') }}" class="k-img-2" alt="Barista">
+            {{-- Tarik Gambar 1 & 2 dari CMS --}}
+            <img src="{{ !empty($cms['kontak_img_1']) ? asset($cms['kontak_img_1']) : asset('images/interior.png') }}" class="k-img-1" alt="Cafe Interior">
+            <img src="{{ !empty($cms['kontak_img_2']) ? asset($cms['kontak_img_2']) : asset('images/barista.png') }}" class="k-img-2" alt="Barista">
         </div>
     </div>
 
     <div class="kontak-row reverse-row">
         <div class="kontak-images-section">
             <div class="kontak-blob bottom-blob"></div>
-            <img src="{{ asset('images/espresso.png') }}" class="k-img-3" alt="Espresso">
-            <img src="{{ asset('images/machine.png') }}" class="k-img-4" alt="Coffee Machine">
+            {{-- Tarik Gambar 3 & 4 dari CMS --}}
+            <img src="{{ !empty($cms['kontak_img_3']) ? asset($cms['kontak_img_3']) : asset('images/espresso.png') }}" class="k-img-3" alt="Espresso">
+            <img src="{{ !empty($cms['kontak_img_4']) ? asset($cms['kontak_img_4']) : asset('images/machine.png') }}" class="k-img-4" alt="Coffee Machine">
         </div>
         
         <div class="kontak-card">
             <h2>Sapa Kami di Sini</h2>
             <hr class="kontak-divider">
-            <p class="form-subtitle">"Tuangkan inspirasi dalam cangkirmu, berikan kesan dan pengalamanmu bersama kami."</p>
+            {{-- Tarik Subtitle Form dari CMS --}}
+            <p class="form-subtitle">{{ $cms['kontak_teks_form'] ?? '"Tuangkan inspirasi dalam cangkirmu, berikan kesan dan pengalamanmu bersama kami."' }}</p>
             
             {{-- FORM TESTIMONI TERINTEGRASI --}}
             <form action="{{ route('testimoni.store') }}" method="POST" class="kontak-form">
