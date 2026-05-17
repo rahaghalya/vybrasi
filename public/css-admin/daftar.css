@@ -1,0 +1,224 @@
+/* =========================================
+   RESET & DASAR
+   ========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    overflow: hidden; /* Mencegah scrollbar pada body penuh */
+    font-family: 'Montserrat', 'Segoe UI', Roboto, sans-serif;
+    background-color: #1B1616; /* Latar belakang dasar gelap */
+}
+
+/* =========================================
+   WADAH UTAMA FLEXBOX
+   ========================================= */
+.register-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+/* =========================================
+   BAGIAN HERO (KIRI)
+   ========================================= */
+.hero-section {
+    flex: 1.2;
+    background-image: url('../images/kopi-5.jpg'); /* Ganti dengan gambar toko roti serupa */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding: 60px 40px;
+    display: flex;
+    align-items: flex-start;
+}
+
+/* Teks Hero Besar */
+.hero-text {
+    color: #FFFFFF;
+    font-family: 'Playfair Display', 'Times New Roman', serif;
+    font-size: 5rem; /* Ukuran font serif besar tebal */
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: capitalize;
+    position: relative;
+    z-index: 10;
+}
+
+/* =========================================
+   BAGIAN FORMULIR (KANAN)
+   ========================================= */
+.form-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F2EBE1; /* Latar krem hangat sisi kanan penuh */
+    padding: 40px;
+}
+
+/* Kotak Daftar Terpusat */
+.register-box {
+    background-color: #FAF9F6; /* Latar krem kusam/pucat kotak daftar */
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); /* Bayangan halus */
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 500px; /* Lebar maksimal kotak daftar */
+    transition: transform 0.3s ease;
+}
+
+.register-box:hover {
+    transform: translateY(-5px); /* Efek melayang saat di-hover */
+}
+
+/* Judul Daftar Besar Serif */
+.register-box h2 {
+    font-family: 'Playfair Display', serif;
+    color: #1B1616;
+    font-size: 3rem;
+    margin-bottom: 40px;
+    font-weight: 700;
+}
+
+/* Tipografi Bidang Input */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.register-box label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #5A4A42; /* Warna label gelap */
+    display: block;
+    margin-bottom: 10px;
+}
+
+.register-box input {
+    width: 100%;
+    padding: 18px 25px;
+    border-radius: 12px;
+    border: none;
+    background-color: #5A4A42; /* Warna input cokelat gelap */
+    color: #FAF9F6; /* Warna teks input krem pucat */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.register-box input::placeholder {
+    color: rgba(250, 249, 246, 0.7); /* Warna placeholder krem pucat kontras */
+    font-weight: 400;
+}
+
+/* Fokus Input */
+.register-box input:focus {
+    outline: none;
+    background-color: #1B1616; /* Latar belakang input gelap saat fokus */
+    color: #FFFFFF;
+}
+
+/* Tombol Daftar Besar Cokelat */
+.btn-register {
+    width: 100%;
+    padding: 18px;
+    border-radius: 12px;
+    border: none;
+    background-color: #5A4A42; /* Warna tombol cokelat gelap */
+    color: #FAF9F6; /* Warna teks tombol krem pucat tebal */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: capitalize;
+    transition: all 0.3s ease;
+}
+
+.btn-register:hover {
+    background-color: #1B1616; /* Latar belakang tombol gelap saat di-hover */
+    box-shadow: 0 4px 10px rgba(27, 22, 22, 0.4);
+}
+
+/* =========================================
+   RESPONSIVITAS MOBILE
+   ========================================= */
+@media (max-width: 1024px) {
+    /* Tata letak beralih ke satu kolom, formulir di bawah gambar */
+    .register-container {
+        flex-direction: column;
+    }
+
+    .hero-section {
+        flex: none;
+        height: 50vh; /* Perkecil tinggi hero untuk layar medium */
+        padding: 40px 20px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .hero-text {
+        font-size: 4rem; /* Perkecil tipografi hero */
+        br { display: none; } /* Hilangkan baris baru pada teks hero di layar mobile */
+    }
+
+    .form-section {
+        flex: none;
+        height: auto;
+        padding: 40px 20px;
+    }
+
+    .register-box {
+        max-width: 100%; /* Kotak daftar memenuhi lebar layar */
+        padding: 40px 20px;
+    }
+
+    .register-box h2 {
+        font-size: 2.5rem; /* Perkecil tipografi judul daftar */
+        margin-bottom: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-text {
+        font-size: 3rem; /* Perkecil tipografi hero lebih lanjut */
+    }
+
+    .register-box input, .btn-register {
+        font-size: 14px; /* Perkecil tipografi input/tombol */
+        padding: 15px 20px;
+    }
+}
+
+/* =========================================
+   LINK PINDAH HALAMAN (LOGIN/DAFTAR)
+   ========================================= */
+.auth-link-container {
+    text-align: right;
+    margin-top: -15px; /* Menarik teks agar lebih dekat dengan input password */
+    margin-bottom: 25px;
+}
+
+.auth-link-text {
+    color: #D4A373; /* Warna krem/cokelat terang */
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.auth-link-text a {
+    color: #005B7F; /* Warna biru gelap sesuai gambar */
+    text-decoration: none;
+    font-weight: 700;
+    margin-left: 3px;
+    transition: 0.3s;
+}
+
+.auth-link-text a:hover {
+    color: #1B1616;
+    text-decoration: underline;
+}
