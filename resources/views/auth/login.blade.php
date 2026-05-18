@@ -6,7 +6,7 @@
     <title>Vybrasi - Login</title>
     <link rel="stylesheet" href="{{ asset('css-admin/daftar.css') }}">
     
-    {{-- Pastikan FontAwesome dimuat (Jika di daftar.css belum ada) --}}
+    {{-- Pastikan FontAwesome dimuat --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -95,7 +95,7 @@
         }
         .password-wrapper input {
             width: 100%;
-            padding-right: 40px; /* Memberi ruang agar teks tidak tertutup ikon */
+            padding-right: 40px; 
         }
         .toggle-password {
             position: absolute;
@@ -106,7 +106,23 @@
             transition: color 0.3s ease;
         }
         .toggle-password:hover {
-            color: #D4A373; /* Berubah warna karamel saat di-hover */
+            color: #D4A373; 
+        }
+
+        /* --- CSS BARU UNTUK LINK LUPA PASSWORD --- */
+        .forgot-password-link {
+            display: block;
+            text-align: right;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #D4A373;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .forgot-password-link:hover {
+            color: #b58b61;
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -134,11 +150,12 @@
 
                     <div class="form-group">
                         <label for="password">Password</label>
-                        {{-- PERUBAHAN: Input password dibungkus untuk menaruh ikon mata --}}
                         <div class="password-wrapper">
                             <input type="password" id="password" name="password" placeholder="Masukan password" required>
                             <i class="fa-solid fa-eye-slash toggle-password" id="togglePasswordBtn" title="Lihat Password"></i>
                         </div>
+                        {{-- LINK LUPA PASSWORD DITAMBAHKAN DI SINI --}}
+                        <a href="{{ url('/lupa-password') }}" class="forgot-password-link">Lupa Password?</a>
                     </div>
 
                     <div class="auth-link-container">
@@ -171,18 +188,16 @@
 
             if (togglePasswordBtn && passwordInput) {
                 togglePasswordBtn.addEventListener('click', function () {
-                    // Cek tipe input saat ini
                     const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                     passwordInput.setAttribute('type', type);
                     
-                    // Ganti ikon mata (eye) ke mata dicoret (eye-slash)
                     this.classList.toggle('fa-eye');
                     this.classList.toggle('fa-eye-slash');
                 });
             }
         });
 
-        // --- FUNGSI MODAL (TIDAK DIUBAH) ---
+        // --- FUNGSI MODAL ---
         function showModal(title, message, type = 'error', isBlocked = false) {
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalMessage').innerText = message;

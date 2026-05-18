@@ -80,6 +80,8 @@ Route::post('/proses-daftar', [AuthController::class, 'prosesDaftar'])->name('da
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login/proses', [AuthController::class, 'prosesLogin'])->name('login.proses');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/lupa-password', [AuthController::class, 'showLupaPassword'])->name('lupa.password');
+Route::post('/lupa-password/proses', [AuthController::class, 'prosesResetLangsung'])->name('password.update.langsung'); // ← tambahkan ini
 
 
 // --- RUTE USER TERAUTENTIKASI ---
