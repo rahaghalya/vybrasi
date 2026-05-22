@@ -33,31 +33,19 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
             <div class="kpi-ic"><i class="fa-solid fa-box-open"></i></div>
             <div>
                 <p class="kpi-lbl">Pesanan Selesai</p>
-<<<<<<< HEAD
-                <h3>{{ $stats->total_pesanan }} <span class="unit">Paket</span></h3>
-=======
                 <h3>{{ $stats->total_pesanan ?? 0 }} <span class="unit">Paket</span></h3>
->>>>>>> frontend-ui
             </div>
         </div>
         <div class="kpi gold-bar">
             <div class="kpi-ic"><i class="fa-solid fa-wallet"></i></div>
             <div>
-<<<<<<< HEAD
-                <p class="kpi-lbl">Total Komisi</p>
-                <h3 class="gold">Rp {{ number_format($stats->total_komisi, 0, ',', '.') }}</h3>
-=======
                 <p class="kpi-lbl">Total Saldo Komisi Saat Ini</p>
                 <h3 class="gold">Rp {{ number_format($affiliate->total_komisi ?? 0, 0, ',', '.') }}</h3>
->>>>>>> frontend-ui
             </div>
         </div>
     </div>
 
-<<<<<<< HEAD
-=======
     {{-- TABEL PROFIL UTAMA --}}
->>>>>>> frontend-ui
     <div class="card mt-18">
         <form action="{{ route('admin.affiliate.update', $affiliate->id) }}" method="POST">
             @csrf
@@ -92,12 +80,6 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
 
                     <div>
                         <label class="lbl">Status Akun Saat Ini</label>
-<<<<<<< HEAD
-                        <select class="inp readonly" style="appearance: none; pointer-events: none;" tabindex="-1">
-                            <option value="aktif" selected>🟢 Aktif (Mitra dapat komisi)</option>
-                        </select>
-                        <span class="hint">Saat ini semua mitra otomatis berstatus aktif.</span>
-=======
                         {{-- FIX: Select diaktifkan agar bisa diubah admin --}}
                         <select name="status_affiliate" class="inp" style="cursor: pointer;">
                             <option value="active" {{ ($affiliate->status_affiliate ?? '') == 'active' ? 'selected' : '' }}>🟢 Aktif (Mitra dapat komisi)</option>
@@ -105,7 +87,6 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
                             <option value="inactive" {{ ($affiliate->status_affiliate ?? '') == 'inactive' ? 'selected' : '' }}>🔴 Nonaktif (Akun ditutup)</option>
                         </select>
                         <span class="hint">Ubah status ini jika mitra melanggar aturan.</span>
->>>>>>> frontend-ui
                     </div>
                 </div>
 
@@ -116,8 +97,6 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
             </div>
         </form>
     </div>
-<<<<<<< HEAD
-=======
 
     {{-- RIWAYAT PENGAJUAN PENCAIRAN (PAYOUT) --}}
     <div class="card mt-18">
@@ -211,34 +190,23 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
             </table>
         </div>
     </div>
->>>>>>> frontend-ui
 </div>
 
 <style>
 *,*::before,*::after{box-sizing:border-box}
 .wrap{padding:20px 28px;color:#fff;animation:fi .4s ease;font-family:inherit;}
 @keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-<<<<<<< HEAD
-.gold{color:#D4A373 !important} .red{color:#ef4444} .mt-18{margin-top:18px}
-=======
 .gold{color:#D4A373 !important} .red{color:#ef4444} .mt-18{margin-top:18px} .mb-15{margin-bottom:15px}
->>>>>>> frontend-ui
 
 .btn-back{display:inline-flex;align-items:center;gap:8px;color:#777;font-size:13px;font-weight:600;text-decoration:none;transition:.2s}
 .btn-back:hover{color:#D4A373;transform:translateX(-4px)}
 .page-title{margin:0 0 25px 0;font-size:20px;font-weight:800;color:#fff;border-left:4px solid #D4A373;padding-left:12px;letter-spacing:1px}
 
-<<<<<<< HEAD
-/* ALERTS */
-.err-box{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);color:#ef4444;padding:14px 18px;border-radius:10px;margin-bottom:20px;font-size:13px;display:flex;gap:12px;align-items:flex-start}
-.succ-box{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);color:#10b981;padding:14px 18px;border-radius:10px;margin-bottom:20px;font-size:13px;display:flex;gap:10px;align-items:center;font-weight:600}
-=======
 /* ALERTS & NOTES */
 .err-box{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);color:#ef4444;padding:14px 18px;border-radius:10px;margin-bottom:20px;font-size:13px;display:flex;gap:12px;align-items:flex-start}
 .succ-box{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);color:#10b981;padding:14px 18px;border-radius:10px;margin-bottom:20px;font-size:13px;display:flex;gap:10px;align-items:center;font-weight:600}
 .info-note{background:#0a0a0a;border:1px solid #1e1e1e;border-left:3px solid #D4A373;border-radius:8px;padding:14px 18px;font-size:13px;color:#ccc;line-height:1.6;display:flex;gap:12px;align-items:flex-start}
 .info-note i{color:#D4A373;font-size:18px;margin-top:2px}
->>>>>>> frontend-ui
 
 /* KPI ROW */
 .kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
@@ -266,9 +234,6 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
 .inp.readonly{background:#0d0d0d;border-color:#1a1a1a;color:#555;cursor:not-allowed}
 .hint{font-size:11px;color:#555;margin-top:6px;display:block;font-style:italic}
 
-<<<<<<< HEAD
-/* ACTIONS */
-=======
 /* TABLE */
 .dtable{width:100%;border-collapse:collapse}
 .dtable th{background:#0d0d0d;color:#D4A373;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:14px 18px;text-align:left;border-bottom:1px solid #1a1a1a;white-space:nowrap}
@@ -279,14 +244,11 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
 .mono{font-family:monospace;letter-spacing:1px}
 
 /* ACTIONS & BADGES */
->>>>>>> frontend-ui
 .act-row{display:flex;justify-content:flex-end;gap:12px;border-top:1px dashed #1e1e1e;padding-top:20px;margin-top:30px}
 .btn-cancel{background:transparent;border:1px solid #2a2a2a;color:#aaa;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;transition:.2s}
 .btn-cancel:hover{background:#1a1a1a;color:#fff;border-color:#444}
 .btn-submit{background:#D4A373;border:none;color:#111;padding:11px 28px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.2s}
 .btn-submit:hover{background:#b58555;transform:translateY(-2px)}
-<<<<<<< HEAD
-=======
 .btn-ol{background:rgba(212,163,115,.05);border:1px solid rgba(212,163,115,.3);color:#D4A373;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;transition:.2s;display:inline-block;}
 .btn-ol:hover{background:#D4A373;color:#fff}
 
@@ -294,6 +256,5 @@ aside, .sidebar, [class*="sidebar"] { background: unset !important; background-c
 .succ{background:rgba(16,185,129,.1);color:#4ade80;border:1px solid rgba(16,185,129,.3)}
 .warn{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.3)}
 .dang{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.3)}
->>>>>>> frontend-ui
 </style>
 @endsection

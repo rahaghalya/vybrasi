@@ -201,11 +201,6 @@
                         <i class="fas fa-box"></i> Manajemen Produk
                     </a>
 
-<<<<<<< HEAD
-                    <a href="{{ route('admin.affiliate') }}" class="nav-item {{ request()->routeIs('admin.affiliate') ? 'active' : '' }}">
-                       <i class="fas fa-users"></i> Manajemen Affiliate
-                    </a>
-=======
                     <div class="dropdown-wrapper">
                         <div class="nav-item dropdown-btn {{ request()->routeIs('admin.affiliate*') || request()->routeIs('admin.payout*') ? 'active' : '' }}" onclick="toggleDropdown('affiliate-drop')">
                             <div style="display:flex; align-items:center; gap:12px;">
@@ -235,7 +230,6 @@
                             </a>
                         </div>
                     </div>
->>>>>>> frontend-ui
                     
                     <a href="{{ route('admin.laporan') }}" class="nav-item {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
                        <i class="fas fa-list-alt"></i> Laporan Transaksi
@@ -314,8 +308,6 @@
                 drop.classList.add('show');
                 drop.previousElementSibling.classList.add('open');
             }
-<<<<<<< HEAD
-=======
             // Auto-open affiliate dropdown jika di halaman affiliate/payout
             const affDrop = document.getElementById('affiliate-drop');
             if (affDrop) {
@@ -325,7 +317,6 @@
                     affDrop.previousElementSibling.classList.add('open');
                 }
             }
->>>>>>> frontend-ui
         });
 
         const scrollArea = document.getElementById('sidebar-scroll-area');
@@ -347,8 +338,6 @@
             }
         });
     </script>
-<<<<<<< HEAD
-=======
 
     {{-- ============================================================ --}}
     {{-- POPUP NOTIFIKASI PENGAJUAN KOMISI AFFILIATE --}}
@@ -447,6 +436,5 @@
     </script>
     @endif
 
->>>>>>> frontend-ui
 </body>
 </html>
