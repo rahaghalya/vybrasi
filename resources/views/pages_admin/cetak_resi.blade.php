@@ -57,6 +57,7 @@
                 <p>Specialty Coffee & Roastery</p>
             </div>
 
+<<<<<<< HEAD
            <div class="barcode-area" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin: 20px 0;">
                 
                 <div style="max-width: 100%; overflow: hidden; display: flex; justify-content: center;">
@@ -67,6 +68,11 @@
                     {{ $transaksi->no_invoice }}
                 </div>
                 
+=======
+            <div class="barcode-area">
+                <div>{!! DNS1D::getBarcodeHTML($transaksi->no_invoice, 'C39', 2, 60) !!}</div>
+                <div class="barcode-text">{{ $transaksi->no_invoice }}</div>
+>>>>>>> frontend-ui
             </div>
 
             <div class="section-title">PENERIMA</div>

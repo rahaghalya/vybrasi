@@ -4,24 +4,6 @@
 
 @section('content')
 <div class="edit-profil-container">
-<<<<<<< HEAD
-    <h1 class="page-title">Profil Saya</h1>
-
-    <div class="edit-profil-card">
-        <div class="edit-avatar-section">
-            <div class="avatar-wrapper">
-                @if(auth()->user()->avatar_url)
-                    <img src="{{ asset('storage/' . auth()->user()->avatar_url) }}" alt="Avatar" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover;">
-                @else
-                    <i class="fa-solid fa-circle-user" style="font-size: 130px; color: #FFFFFF;"></i>
-                @endif
-            </div>
-        </div>
-
-        <form id="form-edit-profil" action="{{ route('profil.update') }}" method="POST" class="edit-profil-form">
-            @csrf
-            @method('PUT') 
-=======
     
     {{-- TOMBOL KEMBALI KE VIEW PROFIL --}}
     <a href="{{ route('profil.view') }}" class="btn-back-hairline" style="align-self: flex-start; margin-bottom: 20px;">
@@ -63,7 +45,6 @@
                     @error('avatar') <small style="color: red; margin-top: 8px; display: block; text-align: center;">{{ $message }}</small> @enderror
                 </div>
             </div>
->>>>>>> frontend-ui
             
             <div class="edit-form-grid">
                 
@@ -116,13 +97,8 @@
                 {{-- ========================================== --}}
                 {{-- ALAMAT PENGIRIMAN                          --}}
                 {{-- ========================================== --}}
-<<<<<<< HEAD
-                <div style="grid-column: span 2; margin-top: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                    <h3 style="color: #333; font-size: 16px;">Alamat Pengiriman</h3>
-=======
                 <div style="grid-column: span 2; margin-top: 15px; border-bottom: 1px solid rgba(27, 22, 22, 0.1); padding-bottom: 10px;">
                     <h3 style="color: var(--vy-pine); font-size: 16px; font-family: 'Playfair Display', serif; margin: 0;">Alamat Pengiriman</h3>
->>>>>>> frontend-ui
                 </div>
 
                 <div class="form-group" style="grid-column: span 2;">
@@ -145,11 +121,7 @@
                 <div class="form-group">
                     <label>Kota / Kabupaten</label>
                     <div class="input-wrapper">
-<<<<<<< HEAD
-                        <input type="text" name="kota" value="{{ old('kota', $alamat->kota ?? '') }}" placeholder="Contoh: Surabaya">
-=======
                         <input type="text" name="kota" value="{{ old('kota', $alamat->kota ?? '') }}" placeholder="Contoh: Sidoarjo">
->>>>>>> frontend-ui
                         <i class="fa-solid fa-city"></i>
                     </div>
                 </div>
@@ -157,11 +129,7 @@
                 <div class="form-group">
                     <label>Kode Pos</label>
                     <div class="input-wrapper">
-<<<<<<< HEAD
-                        <input type="text" name="kode_pos" value="{{ old('kode_pos', $alamat->kode_pos ?? '') }}" placeholder="Contoh: 60111">
-=======
                         <input type="text" name="kode_pos" value="{{ old('kode_pos', $alamat->kode_pos ?? '') }}" placeholder="Contoh: 61253">
->>>>>>> frontend-ui
                         <i class="fa-solid fa-envelopes-bulk"></i>
                     </div>
                 </div>
@@ -169,15 +137,9 @@
                 {{-- ========================================== --}}
                 {{-- UBAH PASSWORD                              --}}
                 {{-- ========================================== --}}
-<<<<<<< HEAD
-                <div style="grid-column: span 2; margin-top: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                    <h3 style="color: #333; font-size: 16px;">Ubah Password</h3>
-                    <p style="font-size: 12px; color: #888;">Kosongkan bagian ini jika Anda tidak ingin mengubah password.</p>
-=======
                 <div style="grid-column: span 2; margin-top: 15px; border-bottom: 1px solid rgba(27, 22, 22, 0.1); padding-bottom: 10px;">
                     <h3 style="color: var(--vy-pine); font-size: 16px; font-family: 'Playfair Display', serif; margin: 0 0 5px 0;">Ubah Password</h3>
                     <p style="font-size: 12px; color: rgba(27, 22, 22, 0.5); font-family: 'Montserrat', sans-serif; margin: 0;">Kosongkan bagian ini jika Anda tidak ingin mengubah password.</p>
->>>>>>> frontend-ui
                 </div>
 
                 <div class="form-group" style="grid-column: span 2;">
@@ -206,12 +168,7 @@
                     </div>
                 </div>
 
-<<<<<<< HEAD
-                {{-- Tombol dipindahkan ke dalam grid, diberi span 2 agar punya baris sendiri, 
-                     dan flex-end agar posisinya rapi di sebelah kanan (atau hapus justify-content untuk posisi kiri) --}}
-=======
                 {{-- TOMBOL SIMPAN --}}
->>>>>>> frontend-ui
                 <div class="form-action" style="grid-column: span 2; margin-top: 15px; display: flex; justify-content: flex-end;">
                     <button type="button" class="btn-simpan-profil" onclick="showConfirmPopup()" style="width: max-content; padding: 12px 24px;">
                         <span>Simpan Perubahan</span>
@@ -225,21 +182,6 @@
 </div>
 
 {{-- STRUKTUR POP-UP CUSTOM --}}
-<<<<<<< HEAD
-<div class="modal-overlay" id="customPopupOverlay">
-    <div class="modal-box" id="popupBox">
-        <div class="modal-icon" id="popupIcon"></div>
-        <h3 class="modal-title" id="popupTitle"></h3>
-        <p class="modal-text" id="popupMessage"></p>
-        
-        <div id="confirmActions" style="display: none; justify-content: center; gap: 10px; margin-top: 20px;">
-            <button class="btn-cancel" onclick="closePopup()" style="background: #ccc; color: #333; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Batal</button>
-            <button class="btn-confirm" onclick="submitForm()" style="background: #D4A373; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">Ya, Simpan</button>
-        </div>
-        
-        <div id="successActions" style="display: none; justify-content: center; margin-top: 20px;">
-            <button class="btn-ok" onclick="closePopup()" style="background: #28a745; color: white; border: none; padding: 10px 30px; border-radius: 5px; cursor: pointer; font-weight: bold;">Mengerti</button>
-=======
 <div class="modal-overlay" id="customPopupOverlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease;">
     <div class="modal-box" id="popupBox" style="background: var(--vy-cream); padding: 30px 40px; border-radius: 12px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 400px; transform: translateY(-20px); transition: all 0.3s ease; border: 1px solid rgba(27, 22, 22, 0.1);">
         <div class="modal-icon" id="popupIcon" style="font-size: 48px; margin-bottom: 15px;"></div>
@@ -253,36 +195,10 @@
         
         <div id="successActions" style="display: none; justify-content: center; margin-top: 20px;">
             <button class="btn-ok" onclick="closePopup()" style="background: var(--vy-sage); color: white; border: none; padding: 10px 30px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;">Mengerti</button>
->>>>>>> frontend-ui
         </div>
     </div>
 </div>
 
-<<<<<<< HEAD
-<style>
-    .modal-overlay {
-        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center;
-        align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
-    }
-    .modal-overlay.active { opacity: 1; visibility: visible; }
-    .modal-box {
-        background: #fff; padding: 30px 40px; border-radius: 12px; text-align: center;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 400px; transform: translateY(-20px); transition: all 0.3s ease;
-    }
-    .modal-overlay.active .modal-box { transform: translateY(0); }
-    .modal-icon { font-size: 48px; margin-bottom: 15px; }
-    .modal-title { font-size: 22px; color: #333; margin-bottom: 10px; font-weight: bold; }
-    .modal-text { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 0;}
-    
-    .modal-box.confirm { border-top: 5px solid #D4A373; }
-    .modal-box.confirm .modal-icon { color: #D4A373; }
-    .modal-box.success { border-top: 5px solid #28a745; }
-    .modal-box.success .modal-icon { color: #28a745; }
-</style>
-
-=======
->>>>>>> frontend-ui
 <script>
     const popupOverlay = document.getElementById('customPopupOverlay');
     const popupBox = document.getElementById('popupBox');
@@ -294,26 +210,17 @@
     const form = document.getElementById('form-edit-profil');
 
     function showConfirmPopup() {
-<<<<<<< HEAD
-        popupBox.className = 'modal-box confirm';
-        popupIcon.innerHTML = '<i class="fa-solid fa-circle-question"></i>';
-=======
         popupBox.style.borderTop = '5px solid var(--vy-sage)';
         popupIcon.innerHTML = '<i class="fa-solid fa-circle-question" style="color: var(--vy-sage);"></i>';
->>>>>>> frontend-ui
         popupTitle.innerText = 'Konfirmasi Perubahan';
         popupMessage.innerText = 'Apakah Anda yakin semua data yang dimasukkan sudah benar?';
         
         confirmActions.style.display = 'flex';
         successActions.style.display = 'none';
         
-<<<<<<< HEAD
-        popupOverlay.classList.add('active');
-=======
         popupOverlay.style.opacity = '1';
         popupOverlay.style.visibility = 'visible';
         popupBox.style.transform = 'translateY(0)';
->>>>>>> frontend-ui
     }
 
     function submitForm() {
@@ -323,9 +230,6 @@
     }
 
     function closePopup() {
-<<<<<<< HEAD
-        popupOverlay.classList.remove('active');
-=======
         popupOverlay.style.opacity = '0';
         popupOverlay.style.visibility = 'hidden';
         popupBox.style.transform = 'translateY(-20px)';
@@ -341,31 +245,21 @@
             }
             reader.readAsDataURL(input.files[0]);
         }
->>>>>>> frontend-ui
     }
 
     document.addEventListener('DOMContentLoaded', function () {
         @if(session('success'))
-<<<<<<< HEAD
-            popupBox.className = 'modal-box success';
-            popupIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-=======
             popupBox.style.borderTop = '5px solid #28a745';
             popupIcon.innerHTML = '<i class="fa-solid fa-circle-check" style="color: #28a745;"></i>';
->>>>>>> frontend-ui
             popupTitle.innerText = 'Berhasil!';
             popupMessage.innerText = '{{ session('success') }}';
             
             confirmActions.style.display = 'none';
             successActions.style.display = 'flex';
             
-<<<<<<< HEAD
-            popupOverlay.classList.add('active');
-=======
             popupOverlay.style.opacity = '1';
             popupOverlay.style.visibility = 'visible';
             popupBox.style.transform = 'translateY(0)';
->>>>>>> frontend-ui
         @endif
     });
 </script>

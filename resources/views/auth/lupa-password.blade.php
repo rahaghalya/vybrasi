@@ -207,4 +207,8 @@
         });
     </script>
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html> 
+>>>>>>> frontend-ui

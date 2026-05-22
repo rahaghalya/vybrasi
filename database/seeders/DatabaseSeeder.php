@@ -20,18 +20,16 @@ class DatabaseSeeder extends Seeder
         // 2. Memasukkan data dummy ke tabel users
         User::create([
             'name' => 'Raha Admin',
-            'username' => 'raha_admin', // TAMBAHAN: Wajib diisi karena migration meminta username
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('password123'),
-            'role_id' => 1,
+            'email' => 'admin@vybrasi.com',
+            'password' => Hash::make('password123'), // Password diseragamkan
+            'role_id' => 1, // Terhubung sebagai Admin
         ]);
 
         User::create([
             'name' => 'User Supervisor',
-            'username' => 'supervisor_v', // TAMBAHAN: Wajib diisi karena migration meminta username
-            'email' => 'spv@gmail.com',
-            'password' => Hash::make('password123'),
-            'role_id' => 2,
+            'email' => 'spv@vybrasi.com',
+            'password' => Hash::make('password123'), // Password diseragamkan
+            'role_id' => 2, // Terhubung sebagai Supervisor
         ]);
     }
 }

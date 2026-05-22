@@ -1,4 +1,8 @@
 @extends('layouts.admin')
+<<<<<<< HEAD
+=======
+@section('title', 'Kelola Beranda')
+>>>>>>> frontend-ui
 @section('content')
 @include('pages_admin.partials.cms_style')
 <div style="padding: 5px 10px;">

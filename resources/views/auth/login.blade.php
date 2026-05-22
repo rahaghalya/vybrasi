@@ -6,7 +6,11 @@
     <title>Vybrasi - Login</title>
     <link rel="stylesheet" href="{{ asset('css-admin/daftar.css') }}">
     
+<<<<<<< HEAD
     {{-- Pastikan FontAwesome dimuat --}}
+=======
+    {{-- Pastikan FontAwesome dimuat (Jika di daftar.css belum ada) --}}
+>>>>>>> frontend-ui
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -95,7 +99,11 @@
         }
         .password-wrapper input {
             width: 100%;
+<<<<<<< HEAD
             padding-right: 40px; 
+=======
+            padding-right: 40px; /* Memberi ruang agar teks tidak tertutup ikon */
+>>>>>>> frontend-ui
         }
         .toggle-password {
             position: absolute;
@@ -106,6 +114,7 @@
             transition: color 0.3s ease;
         }
         .toggle-password:hover {
+<<<<<<< HEAD
             color: #D4A373; 
         }
 
@@ -123,6 +132,9 @@
         .forgot-password-link:hover {
             color: #b58b61;
             text-decoration: underline;
+=======
+            color: #D4A373; /* Berubah warna karamel saat di-hover */
+>>>>>>> frontend-ui
         }
     </style>
 </head>
@@ -150,12 +162,19 @@
 
                     <div class="form-group">
                         <label for="password">Password</label>
+<<<<<<< HEAD
+=======
+                        {{-- PERUBAHAN: Input password dibungkus untuk menaruh ikon mata --}}
+>>>>>>> frontend-ui
                         <div class="password-wrapper">
                             <input type="password" id="password" name="password" placeholder="Masukan password" required>
                             <i class="fa-solid fa-eye-slash toggle-password" id="togglePasswordBtn" title="Lihat Password"></i>
                         </div>
+<<<<<<< HEAD
                         {{-- LINK LUPA PASSWORD DITAMBAHKAN DI SINI --}}
                         <a href="{{ url('/lupa-password') }}" class="forgot-password-link">Lupa Password?</a>
+=======
+>>>>>>> frontend-ui
                     </div>
 
                     <div class="auth-link-container">
@@ -188,16 +207,28 @@
 
             if (togglePasswordBtn && passwordInput) {
                 togglePasswordBtn.addEventListener('click', function () {
+<<<<<<< HEAD
                     const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                     passwordInput.setAttribute('type', type);
                     
+=======
+                    // Cek tipe input saat ini
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    
+                    // Ganti ikon mata (eye) ke mata dicoret (eye-slash)
+>>>>>>> frontend-ui
                     this.classList.toggle('fa-eye');
                     this.classList.toggle('fa-eye-slash');
                 });
             }
         });
 
+<<<<<<< HEAD
         // --- FUNGSI MODAL ---
+=======
+        // --- FUNGSI MODAL (TIDAK DIUBAH) ---
+>>>>>>> frontend-ui
         function showModal(title, message, type = 'error', isBlocked = false) {
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalMessage').innerText = message;
