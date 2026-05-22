@@ -201,9 +201,35 @@
                         <i class="fas fa-box"></i> Manajemen Produk
                     </a>
 
-                    <a href="{{ route('admin.affiliate') }}" class="nav-item {{ request()->routeIs('admin.affiliate') ? 'active' : '' }}">
-                       <i class="fas fa-users"></i> Manajemen Affiliate
-                    </a>
+                    <div class="dropdown-wrapper">
+                        <div class="nav-item dropdown-btn {{ request()->routeIs('admin.affiliate*') || request()->routeIs('admin.payout*') ? 'active' : '' }}" onclick="toggleDropdown('affiliate-drop')">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <i class="fas fa-users"></i> Manajemen Affiliate
+                            </div>
+                            <div style="display:flex;align-items:center;gap:6px;">
+                                @php
+                                    try {
+                                        $pendingPayoutCount = \Illuminate\Support\Facades\DB::table('jualan_kopi.payout_requests')->where('status','pending')->count();
+                                    } catch (\Exception $e) {
+                                        $pendingPayoutCount = 0;
+                                    }
+                                @endphp
+                                @if($pendingPayoutCount > 0)
+                                    <span id="sidebar-payout-badge" style="background:#f87171;color:#fff;font-size:10px;padding:2px 6px;border-radius:50px;font-weight:700;">{{ $pendingPayoutCount }}</span>
+                                @endif
+                                <i class="fas fa-chevron-down arrow-icon"></i>
+                            </div>
+                        </div>
+                        <div class="dropdown-container" id="affiliate-drop">
+                            <a href="{{ route('admin.affiliate') }}" class="dropdown-item {{ request()->routeIs('admin.affiliate') || request()->routeIs('admin.affiliate.tambah') || request()->routeIs('admin.affiliate.profil') ? 'active' : '' }}">Daftar Mitra</a>
+                            <a href="{{ route('admin.payout.index') }}" class="dropdown-item {{ request()->routeIs('admin.payout*') ? 'active' : '' }}" style="display:flex;align-items:center;justify-content:space-between;">
+                                Pengajuan Komisi
+                                @if($pendingPayoutCount > 0)
+                                    <span style="background:#f87171;color:#fff;font-size:10px;padding:2px 6px;border-radius:50px;font-weight:700;">{{ $pendingPayoutCount }}</span>
+                                @endif
+                            </a>
+                        </div>
+                    </div>
                     
                     <a href="{{ route('admin.laporan') }}" class="nav-item {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
                        <i class="fas fa-list-alt"></i> Laporan Transaksi
@@ -282,6 +308,15 @@
                 drop.classList.add('show');
                 drop.previousElementSibling.classList.add('open');
             }
+            // Auto-open affiliate dropdown jika di halaman affiliate/payout
+            const affDrop = document.getElementById('affiliate-drop');
+            if (affDrop) {
+                const isAffPage = window.location.href.includes('/affiliate') || window.location.href.includes('/payout');
+                if (isAffPage || localStorage.getItem('affiliate-drop') === 'true') {
+                    affDrop.classList.add('show');
+                    affDrop.previousElementSibling.classList.add('open');
+                }
+            }
         });
 
         const scrollArea = document.getElementById('sidebar-scroll-area');
@@ -303,5 +338,103 @@
             }
         });
     </script>
+
+    {{-- ============================================================ --}}
+    {{-- POPUP NOTIFIKASI PENGAJUAN KOMISI AFFILIATE --}}
+    {{-- ============================================================ --}}
+    @php
+        try {
+            $newPayouts = \Illuminate\Support\Facades\DB::table('jualan_kopi.payout_requests as pr')
+                ->join('jualan_kopi.profiles as p', 'pr.id_affiliate', '=', 'p.id')
+                ->where('pr.status', 'pending')
+                ->select('pr.*', 'p.full_name')
+                ->orderByDesc('pr.created_at')
+                ->limit(5)
+                ->get();
+        } catch (\Exception $e) {
+            $newPayouts = collect();
+        }
+    @endphp
+
+    @if($newPayouts->count() > 0)
+    <div class="payout-popup-overlay" id="payoutNotifPopup">
+        <div class="payout-popup-box">
+            <div class="payout-popup-icon">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <h3 class="payout-popup-title">Pengajuan Komisi Baru!</h3>
+            <p class="payout-popup-sub">
+                Ada <strong>{{ $newPayouts->count() }}</strong> pengajuan pencairan komisi yang menunggu review Anda.
+            </p>
+
+            <div class="payout-popup-list">
+                @foreach($newPayouts as $np)
+                <div class="payout-popup-item">
+                    <div class="payout-popup-avatar">
+                        {{ strtoupper(substr($np->full_name ?? 'A', 0, 1)) }}
+                    </div>
+                    <div class="payout-popup-info">
+                        <span class="payout-popup-name">{{ $np->full_name ?? 'Tanpa Nama' }}</span>
+                        <span class="payout-popup-amount">Rp {{ number_format($np->jumlah, 0, ',', '.') }}</span>
+                    </div>
+                    <span class="payout-popup-time">
+                        {{ \Carbon\Carbon::parse($np->created_at)->diffForHumans() }}
+                    </span>
+                </div>
+                @endforeach
+            </div>
+
+            <div class="payout-popup-actions">
+                <a href="{{ route('admin.payout.index', ['status' => 'pending']) }}" class="payout-btn-review">
+                    <i class="fas fa-search"></i> Review Sekarang
+                </a>
+                <button class="payout-btn-later" onclick="tutupPayoutPopup()">
+                    <i class="fas fa-clock"></i> Nanti Saja
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    .payout-popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(5px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;animation:payoutFadeIn .3s ease}
+    @keyframes payoutFadeIn{from{opacity:0}to{opacity:1}}
+    .payout-popup-box{background:#111;border:1px solid rgba(248,113,113,.3);border-radius:16px;padding:28px 24px;max-width:420px;width:100%;text-align:center;animation:payoutSlideUp .35s ease;box-shadow:0 0 40px rgba(248,113,113,.1)}
+    @keyframes payoutSlideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    .payout-popup-icon{width:60px;height:60px;background:rgba(248,113,113,.1);border:2px solid rgba(248,113,113,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:26px;color:#f87171;animation:payoutPulse 2s infinite}
+    @keyframes payoutPulse{0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,.3)}50%{box-shadow:0 0 0 8px rgba(248,113,113,0)}}
+    .payout-popup-title{margin:0 0 6px;font-size:18px;font-weight:800;color:#fff}
+    .payout-popup-sub{margin:0 0 18px;color:#888;font-size:13px;line-height:1.6}
+    .payout-popup-sub strong{color:#f87171}
+    .payout-popup-list{background:#0a0a0a;border:1px solid #1e1e1e;border-radius:10px;margin-bottom:18px;overflow:hidden;text-align:left}
+    .payout-popup-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #161616}
+    .payout-popup-item:last-child{border-bottom:none}
+    .payout-popup-avatar{width:34px;height:34px;border-radius:50%;background:rgba(212,163,115,.15);border:1px solid rgba(212,163,115,.3);color:#D4A373;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .payout-popup-info{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+    .payout-popup-name{color:#fff;font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .payout-popup-amount{color:#D4A373;font-size:12px;font-weight:700}
+    .payout-popup-time{color:#555;font-size:11px;flex-shrink:0}
+    .payout-popup-actions{display:flex;gap:10px}
+    .payout-btn-review{flex:1;background:#f87171;border:none;color:#fff;padding:12px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;transition:.2s}
+    .payout-btn-review:hover{background:#ef4444;color:#fff}
+    .payout-btn-later{flex:1;background:#0a0a0a;border:1px solid #2a2a2a;color:#666;padding:12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s}
+    .payout-btn-later:hover{border-color:#444;color:#aaa}
+    </style>
+
+    <script>
+    function tutupPayoutPopup() {
+        const popup = document.getElementById('payoutNotifPopup');
+        if (popup) {
+            popup.style.opacity = '0';
+            popup.style.transition = 'opacity .3s ease';
+            setTimeout(() => popup.style.display = 'none', 300);
+        }
+    }
+    // Tutup saat klik overlay
+    document.getElementById('payoutNotifPopup')?.addEventListener('click', function(e) {
+        if (e.target === this) tutupPayoutPopup();
+    });
+    </script>
+    @endif
+
 </body>
 </html>

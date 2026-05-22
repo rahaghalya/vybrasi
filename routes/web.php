@@ -6,14 +6,17 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Produk;
+use App\Http\Controllers\PayoutController;
+
 
 // --- RUTE PUBLIK (Tanpa Login) ---
 Route::get('/', function () {
-    $featuredProducts = App\Models\Produk::where('is_featured', true)->take(8)->get();
+    // FIX: Menggunakan string 'true' untuk PostgreSQL
+    $featuredProducts = App\Models\Produk::where('is_featured', 'true')->take(8)->get();
     $products = App\Models\Produk::latest()->take(6)->get(); 
     
     $testimonials = \Illuminate\Support\Facades\DB::table('jualan_kopi.testimoni')
-        ->where('is_tampil', true)
+        ->where('is_tampil', 'true') // FIX: Menggunakan string 'true'
         ->whereNull('id_produk') 
         ->orderBy('created_at', 'desc')->take(3)->get();
         
@@ -24,27 +27,21 @@ Route::get('/produk', function (\Illuminate\Http\Request $request) {
     $query = \Illuminate\Support\Facades\DB::table('jualan_kopi.produk')
         ->orderBy('created_at', 'desc');
 
-    // Filter Pencarian Nama
     if ($request->filled('search')) {
         $query->where('nama', 'ilike', '%' . $request->search . '%');
     }
 
-    // Filter Kategori (Sekarang berupa String tunggal dari Radio Button)
     if ($request->filled('kategori')) {
         $kategori = $request->kategori;
-        
         if ($kategori == 'gula_aren') {
             $query->where('nama', 'ilike', '%gula aren%');
         } elseif ($kategori == 'signature') {
             $query->where('nama', 'ilike', '%signature%');
         } elseif ($kategori == 'unggulan') {
-            // Misalnya produk unggulan ditandai dengan harga di atas 50rb atau kriteria lain.
-            // Jika tidak ada kolom khusus, kita filter berdasarkan keyword tertentu.
             $query->where('nama', 'ilike', '%blend%')->orWhere('harga', '>', 50000); 
         }
     }
 
-    // Filter Stok (Sekarang berupa String tunggal dari Radio Button)
     if ($request->filled('stok')) {
         $stok = $request->stok;
         if ($stok == 'tersedia') {
@@ -53,7 +50,6 @@ Route::get('/produk', function (\Illuminate\Http\Request $request) {
             $query->where('stok', '=', 0);
         }
     } else {
-        // Default: hanya tampilkan yang stoknya tersedia jika user belum memilih filter
         $query->where('stok', '>', 0);
     }
 
@@ -64,7 +60,7 @@ Route::get('/produk', function (\Illuminate\Http\Request $request) {
 
 Route::get('/produk/{slug}', function ($slug) {
     $produk = App\Models\Produk::with(['ulasan' => function($q) {
-        $q->where('is_hidden', 0);
+        $q->where('is_hidden', 'false'); // FIX: Menggunakan string 'false'
     }, 'ulasan.user'])->where('slug', $slug)->firstOrFail();
     
     return view('pages.detail-produk', compact('produk')); 
@@ -81,7 +77,7 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login/proses', [AuthController::class, 'prosesLogin'])->name('login.proses');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/lupa-password', [AuthController::class, 'showLupaPassword'])->name('lupa.password');
-Route::post('/lupa-password/proses', [AuthController::class, 'prosesResetLangsung'])->name('password.update.langsung'); // ← tambahkan ini
+Route::post('/lupa-password/proses', [AuthController::class, 'prosesResetLangsung'])->name('password.update.langsung');
 
 
 // --- RUTE USER TERAUTENTIKASI ---
@@ -111,7 +107,6 @@ Route::middleware(['auth'])->group(function () {
     })->name('pesanan.riwayat');
 
     Route::post('/riwayat-pesanan/ulasan', function (\Illuminate\Http\Request $request) {
-        // Validasi input dari form
         $request->validate([
             'jenis_ulasan' => 'required', 
             'nama'         => 'required',
@@ -129,10 +124,7 @@ Route::middleware(['auth'])->group(function () {
             'nama_pelanggan' => $request->nama,
             'rating'         => $request->rating,
             'komentar'       => $request->ulasan_teks,
-            
-            // PERBAIKAN: Set menjadi false agar tidak langsung tampil di web
-            'is_tampil'      => false, 
-            
+            'is_tampil'      => 'false', // FIX: Pakai string 'false'
             'created_at'     => now(),
             'updated_at'     => now(),
         ]);
@@ -324,19 +316,17 @@ Route::middleware(['auth'])->group(function () {
         $idTransaksi = \Illuminate\Support\Str::uuid();
         $catatanInfo = "Penerima: {$checkoutData['nama_lengkap']} | WA: {$checkoutData['no_wa']} | Alamat: {$checkoutData['alamat']}, {$checkoutData['kota']}";
 
-        // 1. Simpan Alamat Baru Jika Dicentang
         if (isset($checkoutData['simpan_alamat']) && $checkoutData['simpan_alamat'] == '1') {
             \Illuminate\Support\Facades\DB::table('jualan_kopi.alamat_pengiriman')->insert([
                 'id_alamat'      => \Illuminate\Support\Str::uuid(),
                 'user_id'        => $user->id,
                 'kota'           => $checkoutData['kota'],
                 'alamat_lengkap' => $checkoutData['alamat'],
-                'is_primary'     => false,
+                'is_primary'     => 'false',
                 'created_at'     => now(), 'updated_at' => now(),
             ]);
         }
 
-        // 2. Insert Header Transaksi
         \Illuminate\Support\Facades\DB::table('jualan_kopi.transaksi')->insert([
             'id_transaksi'     => $idTransaksi,
             'no_invoice'       => $orderId,
@@ -351,9 +341,7 @@ Route::middleware(['auth'])->group(function () {
             'created_at'       => now(), 'updated_at' => now(),
         ]);
 
-        // 3. Insert Detail Transaksi DAN POTONG STOK
         foreach($cartItems as $item) {
-            // Simpan Detail
             \Illuminate\Support\Facades\DB::table('jualan_kopi.transaksi_detail')->insert([
                 'id_detail'   => \Illuminate\Support\Str::uuid(),
                 'id_transaksi' => $idTransaksi,
@@ -365,13 +353,35 @@ Route::middleware(['auth'])->group(function () {
                 'created_at'  => now(),
             ]);
 
-            // --- LOGIKA POTONG STOK ---
             \Illuminate\Support\Facades\DB::table('jualan_kopi.produk')
                 ->where('id_produk', $item->id_produk)
                 ->decrement('stok', $item->jumlah);
+                
+            // --- LOGIKA KOMISI BARU (PENDING) ---
+            $userProfile = \Illuminate\Support\Facades\DB::table('jualan_kopi.profiles')
+                ->where('user_id', $user->id)->first();
+                
+            if ($userProfile && $userProfile->kode_referal_used) {
+                $affiliateProfile = \Illuminate\Support\Facades\DB::table('jualan_kopi.affiliate_profiles')
+                    ->where('kode_referal', $userProfile->kode_referal_used)->first();
+                    
+                if ($affiliateProfile) {
+                    $komisi = $item->harga * 0.1 * $item->jumlah;
+                        
+                    \Illuminate\Support\Facades\DB::table('jualan_kopi.komisi_histori')->insert([
+                        'id_histori'    => \Illuminate\Support\Str::uuid(),
+                        'id_affiliate'  => $affiliateProfile->id_affiliate,
+                        'id_transaksi'  => $idTransaksi,
+                        'jumlah_komisi' => $komisi,
+                        'persentase'    => 10,
+                        'status_komisi' => 'pending', // BARU: Tertunda, tidak langsung masuk ke total_komisi
+                        'created_at'    => now(),
+                        'updated_at'    => now(),
+                    ]);
+                }
+            }
         }
 
-        // 4. Bersihkan Keranjang & Sesi
         if (session()->has('selected_items')) {
             \Illuminate\Support\Facades\DB::table('jualan_kopi.keranjang')
                 ->whereIn('id_keranjang', session('selected_items'))->delete();
@@ -390,6 +400,16 @@ Route::middleware(['auth'])->group(function () {
         $totalBayar    = $orderSuccess['totalBayar'];
         return view('pages.pesanan-berhasil', compact('paymentMethod', 'orderId', 'totalBayar')); 
     })->name('pesanan.berhasil');
+    
+    // =========================================================
+    // RUTE AFFILIATE (User biasa yang menjadi affiliate)
+    // =========================================================
+    Route::prefix('affiliate')->name('affiliate.')->group(function () {
+        Route::get('/dashboard', [PayoutController::class, 'affiliateDashboard'])->name('dashboard');
+        Route::get('/komisi', [PayoutController::class, 'affiliateKomisi'])->name('komisi');
+        Route::get('/komisi/ajukan', [PayoutController::class, 'affiliateIndex'])->name('payout.index');
+        Route::post('/komisi/ajukan', [PayoutController::class, 'affiliateStore'])->name('payout.store');
+    });
 });
 
 
@@ -397,10 +417,8 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/beranda', [AdminController::class, 'index'])->name('admin.beranda');
     
-    // API untuk Update Grafik Beranda
     Route::get('/admin/api/chart-pendapatan', [AdminController::class, 'apiChartPendapatan'])->name('admin.api.chart');
 
-    // KELOMPOK RUTE MANAJEMEN KONTEN (CMS)
     Route::prefix('admin/manajemen-konten')->name('admin.konten.')->group(function () {
         Route::get('/beranda', [AdminController::class, 'cmsBeranda'])->name('beranda');
         Route::get('/tentang', [AdminController::class, 'cmsTentang'])->name('tentang');
@@ -408,7 +426,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/update', [AdminController::class, 'updateKonten'])->name('update');
     });
 
-    // PRODUK
     Route::get('/admin/produk', [AdminController::class, 'produk'])->name('admin.produk');
     Route::get('/admin/produk/tambah', [AdminController::class, 'tambahProduk'])->name('admin.produk.tambah');
     Route::post('/admin/produk/tambah', [AdminController::class, 'storeProduk'])->name('admin.produk.store');
@@ -416,31 +433,42 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/admin/produk/update/{id}', [AdminController::class, 'updateProduk'])->name('admin.produk.update');
     Route::delete('/admin/produk/hapus/{id}', [AdminController::class, 'hapusProduk'])->name('admin.produk.hapus');
     
-    // TRANSAKSI & LAPORAN
     Route::get('/admin/laporan-transaksi', [AdminController::class, 'laporanTransaksi'])->name('admin.laporan');
     Route::get('/admin/laporan-transaksi/pdf', [AdminController::class, 'exportPdfLaporan'])->name('admin.laporan.pdf');
     Route::get('/admin/transaksi/detail/{id}', [AdminController::class, 'detailTransaksi'])->name('admin.transaksi.detail');
     
-    // PENGIRIMAN
     Route::get('/admin/pengiriman', [AdminController::class, 'pengiriman'])->name('admin.pengiriman');
     Route::post('/admin/pengiriman/update', [AdminController::class, 'updatePengiriman'])->name('admin.pengiriman.update');
-    // PESAN & KANBAN PESANAN BARU
+    
     Route::get('/admin/pesan', [AdminController::class, 'pesan'])->name('admin.pesan');
     Route::get('/admin/pesanan-baru', [AdminController::class, 'pesananBaru'])->name('admin.pesanan_baru');
-    Route::post('/admin/pesanan-baru/update-status/{id}/{status}', [AdminController::class, 'updateStatusPesanan']); // Route AJAX untuk Kanban
+    Route::post('/admin/pesanan-baru/update-status/{id}/{status}', [AdminController::class, 'updateStatusPesanan']);
     
-    // TESTIMONI
     Route::get('/admin/testimoni', [AdminController::class, 'testimoni'])->name('admin.testimoni');
     Route::post('/admin/testimoni/toggle/{id}', [AdminController::class, 'toggleTestimoni']);
     Route::delete('/admin/testimoni/hapus/{id}', [AdminController::class, 'hapusTestimoni'])->name('admin.testimoni.hapus');
 
-    // AFFILIATE
     Route::get('/admin/affiliate', [AdminController::class, 'affiliate'])->name('admin.affiliate');
     Route::get('/admin/affiliate/tambah', [AdminController::class, 'tambahAffiliate'])->name('admin.affiliate.tambah');
     Route::post('/admin/affiliate/tambah', [AdminController::class, 'storeAffiliate'])->name('admin.affiliate.store');
     Route::get('/admin/affiliate/profil/{id}', [AdminController::class, 'profilAffiliate'])->name('admin.affiliate.profil');
     Route::put('/admin/affiliate/profil/{id}', [AdminController::class, 'updateProfilAffiliate'])->name('admin.affiliate.update');
 
-    // Rute untuk cetak resi pengiriman ber-Barcode
-Route::get('/admin/pengiriman/cetak-resi/{id}', [App\Http\Controllers\AdminController::class, 'cetakResi'])->name('admin.pengiriman.cetak_resi');
+    Route::get('/admin/pengiriman/cetak-resi/{id}', [App\Http\Controllers\AdminController::class, 'cetakResi'])->name('admin.pengiriman.cetak_resi');
+
+    Route::get('/admin/payout', [PayoutController::class, 'adminIndex'])->name('admin.payout.index');
+    Route::get('/admin/payout/{id}', [PayoutController::class, 'adminDetail'])->name('admin.payout.detail');
+    Route::patch('/admin/payout/{id}/approve', [PayoutController::class, 'approve'])->name('admin.payout.approve');
+    Route::patch('/admin/payout/{id}/reject', [PayoutController::class, 'reject'])->name('admin.payout.reject');
+    // API Cek Pengajuan Payout Pending untuk Notifikasi
+    Route::get('/admin/api/check-payout-pending', function() {
+        $count = \Illuminate\Support\Facades\DB::table('jualan_kopi.payout_requests')
+            ->where('status', 'pending')
+            ->count();
+            
+        return response()->json([
+            'has_new' => ($count > 0),
+            'message' => "Terdapat {$count} pengajuan komisi yang menunggu verifikasi."
+        ]);
+    })->name('admin.api.payout_pending');
 });
