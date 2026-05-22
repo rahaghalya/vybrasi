@@ -61,7 +61,7 @@ class AuthController extends Controller
 
     public function prosesDaftar(Request $request)
     {
-        // 1. Validasi format (tanpa unique — dicek manual di bawah)
+        // 1. Validasi format
         $request->validate([
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'string', 'email', 'max:255', 'ends_with:@gmail.com'],
@@ -72,7 +72,7 @@ class AuthController extends Controller
             'password.min'       => 'Password minimal harus 8 karakter.',
         ]);
 
-        // 2. Cek email unik secara manual ke tabel profiles (search_path sudah jualan_kopi)
+        // 2. Cek email unik secara manual ke tabel profiles
         $emailSudahAda = DB::table('profiles')
             ->where('email', strtolower($request->email))
             ->exists();
@@ -108,6 +108,44 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect('/');
+    }
+
+    // ==========================================
+    // FITUR LUPA PASSWORD (RESET LANGSUNG)
+    // ==========================================
+    
+    // 1. Menampilkan halaman form ubah password
+    public function showLupaPassword()
+    {
+        return view('auth.lupa-password');
+    }
+
+    // 2. Memproses perubahan password di database (Menggunakan Model User)
+    public function prosesResetLangsung(Request $request)
+    {
+        // 1. Validasi input
+        $request->validate([
+            'email'    => ['required', 'email'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ], [
+            'password.confirmed' => 'Konfirmasi password tidak cocok!',
+            'password.min'       => 'Password baru minimal harus 6 karakter!'
+        ]);
+
+        // 2. Cari user menggunakan Eloquent Model User (Lebih aman untuk PostgreSQL Schema)
+        $user = User::where('email', strtolower($request->email))->first();
+
+        if (!$user) {
+            return back()->withErrors(['email' => 'Email tidak terdaftar di sistem kami.'])->withInput();
+        }
+
+        // 3. Update password
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        // 4. Kembali ke halaman login dengan pop-up sukses
+        return redirect()->route('login')->with('success', 'Password berhasil diubah! Silakan login dengan password baru Anda.');
     }
 }
