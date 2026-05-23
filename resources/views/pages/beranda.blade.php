@@ -77,7 +77,7 @@
             {{-- Kita beri class 'item-large' atau 'item-small' secara bergantian untuk efek asimetris --}}
             <div class="editorial-item {{ $index === 0 ? 'item-large' : 'item-small' }}">
                 <div class="item-inner">
-                    <img src="{{ isset($product->image) ? asset($product->image) : 'https://placehold.co/800x1000/1E261F/F4F1E8' }}" alt="{{ $product->name }}">
+                    <img src="{{ $product->gambar_utama ? $product->gambar_utama : 'https://placehold.co/800x1000/1E261F/F4F1E8' }}" alt="{{ $product->nama }}">
                     <div class="item-overlay">
                         <div class="content">
                             <span>0{{ $index + 1 }}</span>

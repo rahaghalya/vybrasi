@@ -11,15 +11,24 @@ use App\Http\Controllers\PayoutController;
 
 // --- RUTE PUBLIK (Tanpa Login) ---
 Route::get('/', function () {
-    $featuredProducts = App\Models\Produk::whereRaw('is_featured = true')->take(8)->get();
-    $products = App\Models\Produk::latest()->take(6)->get(); 
+    $cms = \Illuminate\Support\Facades\DB::table('jualan_kopi.settings')
+        ->pluck('value', 'key')
+        ->toArray();
+
+    $featuredProducts = App\Models\Produk::whereRaw('"is_featured" = true')->take(8)->get();
     
+    $products = App\Models\Produk::withCount('ulasan')
+    ->withAvg('ulasan', 'rating')
+    ->orderBy('ulasan_avg_rating', 'desc')
+    ->orderBy('ulasan_count', 'desc')
+    ->take(6)->get();
+        
     $testimonials = \Illuminate\Support\Facades\DB::table('jualan_kopi.testimoni')
-        ->whereRaw('is_tampil = true')
+        ->whereRaw('"is_tampil" = true')
         ->whereNull('id_produk') 
         ->orderBy('created_at', 'desc')->take(3)->get();
         
-    return view('pages.beranda', compact('featuredProducts', 'products', 'testimonials')); 
+    return view('pages.beranda', compact('featuredProducts', 'products', 'testimonials', 'cms')); 
 })->name('beranda');
 
 Route::get('/produk', function (\Illuminate\Http\Request $request) {
