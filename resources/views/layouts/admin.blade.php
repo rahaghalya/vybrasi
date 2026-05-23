@@ -253,10 +253,24 @@
                         </div>
                     </div>
 
-                    <a href="{{ route('admin.pesan') }}" class="nav-item {{ request()->routeIs('admin.pesan') ? 'active' : '' }}">
-                        <i class="fas fa-comment-dots"></i> Pesan & Ulasan
-                        <span class="nav-badge" id="sidebar-pesan-badge" style="display: none;">0</span>
-                    </a>
+                    {{-- DROPDOWN PESAN & ULASAN --}}
+                <div class="dropdown-wrapper">
+                    <div class="nav-item dropdown-btn" onclick="toggleDropdown('pesan-drop')">
+                        <div style="display:flex; align-items:center; gap:12px; width: 100%;">
+                            <i class="fas fa-comment-dots"></i> Pesan & Ulasan
+                            {{-- Badge notifikasi dipindah ke dalam container flex agar sejajar --}}
+                            <span class="nav-badge" id="sidebar-pesan-badge" style="display: none; background:#ef4444; color:#fff; font-size:10px; padding:2px 6px; border-radius:50px; margin-left:auto;">0</span>
+                        </div>
+                        <i class="fas fa-chevron-down arrow-icon"></i>
+                    </div>
+                    <div class="dropdown-container" id="pesan-drop">
+                        {{-- Mengarah ke halaman Pesan Pelanggan (Testimoni Umum) --}}
+                        <a href="{{ route('admin.pesan') }}" class="dropdown-item {{ request()->routeIs('admin.pesan') ? 'active' : '' }}">Pesan Pelanggan</a>
+                        
+                        {{-- Mengarah ke halaman Ulasan & Rating Produk --}}
+                        <a href="{{ route('admin.ulasan') }}" class="dropdown-item {{ request()->routeIs('admin.ulasan') ? 'active' : '' }}">Ulasan & Rating</a>
+                    </div>
+                </div>
 
                     <div class="sidebar-divider"></div>
 
@@ -315,6 +329,14 @@
                 if (isAffPage || localStorage.getItem('affiliate-drop') === 'true') {
                     affDrop.classList.add('show');
                     affDrop.previousElementSibling.classList.add('open');
+                }
+            }
+
+            if (localStorage.getItem('pesan-drop') === 'true') {
+                const pesanDrop = document.getElementById('pesan-drop');
+                if (pesanDrop) {
+                    pesanDrop.classList.add('show');
+                    pesanDrop.previousElementSibling.classList.add('open');
                 }
             }
         });

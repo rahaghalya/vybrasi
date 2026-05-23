@@ -3,221 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vybrasi - Mulai Perjalanan Kopimu (Daftar)</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css-admin/daftar.css') }}">
-    <style>
-        .error-message {
-            color: #C25953;
-            font-size: 12px;
-            margin-top: 5px;
-            display: block;
-            text-align: left;
-        }
-
-        /* CSS KHUSUS UNTUK POP-UP CUSTOM */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-box {
-            background: #fff;
-            padding: 30px 40px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            max-width: 420px;
-            width: 90%;
-            transform: translateY(-20px);
-            transition: all 0.3s ease;
-            border-top: 5px solid #28a745; /* Border sukses */
-        }
-        .modal-box.error {
-            border-top: 5px solid #C25953; /* Border error */
-        }
-        .modal-overlay.active .modal-box {
-            transform: translateY(0);
-        }
-        .modal-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-        .modal-title {
-            font-size: 22px;
-            color: #333;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        .modal-text {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-        /* Style list error agar rapi di dalam pop-up */
-        .modal-error-list {
-            text-align: left;
-            color: #C25953;
-            font-size: 13px;
-            margin-bottom: 20px;
-            padding-left: 20px;
-        }
-        .btn-close-modal {
-            background: #D4A373;
-            color: white;
-            border: none;
-            padding: 10px 30px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            transition: background 0.3s;
-        }
-        .btn-close-modal:hover {
-            background: #b58b61;
-        }
-        .modal-loading {
-            display: none;
-            font-size: 12px;
-            color: #999;
-            margin-top: 10px;
-        }
-        .modal-loading.show {
-            display: block;
-        }
-    </style>
+    <title>Vybrasi - Buat Akun Baru</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="register-container">
-        
-        <div class="hero-section">
-            <h1 class="hero-text">Mulai<br>Perjalanan<br>Kopimu</h1>
-        </div>
 
-        <div class="form-section">
-            <div class="register-box">
-                <h2>Daftar</h2>
-                
-                <form action="{{ route('daftar.proses') }}" method="POST">
-                    @csrf 
-                    
-                    <div class="form-group">
-                        <label for="name">Nama Lengkap</label>
-                        <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="Masukan nama" required>
-                        @error('name') <small class="error-message">{{ $message }}</small> @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email Gmail</label>
-                        <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="contoh@gmail.com" required>
-                        @error('email') <small class="error-message">{{ $message }}</small> @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Minimal 8 karakter" required>
-                        @error('password') <small class="error-message">{{ $message }}</small> @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password_confirmation">Konfirmasi Password</label>
-                        <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Ulangi password" required>
-                    </div>
-
-                    <div class="auth-link-container">
-                        <span class="auth-link-text">Sudah punya akun? <a href="{{ route('login') }}">Login</a></span>
-                    </div>
-
-                    <button type="submit" class="btn-register">Daftar & Mulai Belanja</button>
-                </form>
-                
+    <div class="vy-split-layout">
+        {{-- SISI KIRI: BRANDING (PINE) --}}
+        <div class="vy-split-brand">
+            <div class="brand-content-wrapper">
+                <div class="brand-logo-text">Vybrasi.</div>
+                <h1 class="brand-headline">Mari<br><i class="serif-accent">Bergabung.</i></h1>
+                <p class="brand-description">Daftarkan diri Anda untuk mendapatkan akses eksklusif ke koleksi kurasi kopi terbaik kami.</p>
             </div>
         </div>
 
-    </div>
+        {{-- SISI KANAN: FORM (CREAM) --}}
+        <div class="vy-split-form">
+            <div class="form-container">
+                <div class="auth-header-editorial">
+                    <span class="badge-serif">Registrasi</span>
+                    <h2 class="editorial-form-title">Buat Akun Baru</h2>
+                </div>
 
-    {{-- Modal Pop-up --}}
-    <div class="modal-overlay" id="customModal">
-        <div class="modal-box" id="modalBox">
-            <div class="modal-icon" id="modalIcon"></div>
-            <h3 class="modal-title" id="modalTitle"></h3>
-            <p class="modal-text" id="modalMessage"></p>
-            
-            {{-- Tempat memunculkan list error dari Laravel --}}
-            <ul class="modal-error-list" id="modalErrorList" style="display: none;"></ul>
+                <form action="{{ route('daftar.proses') }}" method="POST" class="auth-form">
+                    @csrf
+                    
+                    <div class="form-group-hairline">
+                        <label for="name">Nama Lengkap</label>
+                        <input type="text" name="name" id="name" class="input-hairline" placeholder="Nama Anda" value="{{ old('name') }}" required>
+                        @error('name') <span class="error-message">{{ $message }}</span> @enderror
+                    </div>
 
-            <button class="btn-close-modal" id="modalBtn" onclick="closeModal()">OK</button>
-            <p class="modal-loading" id="modalLoading">Mengalihkan ke halaman login...</p>
+                    <div class="form-group-hairline">
+                        <label for="email">Alamat Email</label>
+                        <input type="email" name="email" id="email" class="input-hairline" placeholder="contoh@gmail.com" value="{{ old('email') }}" required>
+                        @error('email') <span class="error-message">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="form-group-hairline">
+                        <label for="password">Kata Sandi</label>
+                        <input type="password" name="password" id="password" class="input-hairline" placeholder="Minimal 8 karakter" required>
+                        @error('password') <span class="error-message">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="form-group-hairline">
+                        <label for="password_confirmation">Konfirmasi Password</label>
+                        <input type="password" name="password_confirmation" id="password_confirmation" class="input-hairline" placeholder="Ulangi kata sandi" required>
+                    </div>
+
+                    <div class="auth-options">
+                        <span class="auth-link-text">Sudah punya akun? <a href="{{ route('login') }}" class="auth-link-bold">Masuk</a></span>
+                    </div>
+
+                    <button type="submit" class="btn-checkout-pill auth-btn-full">
+                        Daftar Sekarang <i class="fa-solid fa-arrow-right-long" style="margin-left: 8px;"></i>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
-    <script>
-        const IS_SUCCESS = @json(session()->has('success'));
-        const SUCCESS_MSG = @json(session('success'));
-        const HAS_ERRORS = @json($errors->any());
-        // Menangkap semua pesan error ke dalam array JavaScript
-        const ERRORS_LIST = @json($errors->all());
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --vy-cream: #F2EBE1; --vy-pine: #1A2F24; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--vy-cream); color: var(--vy-pine); }
 
-        function showModal(icon, title, message, isError = false) {
-            document.getElementById('modalIcon').innerText = icon;
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalMessage').innerText = message;
+        .vy-split-layout { display: flex; width: 100%; height: 100vh; }
 
-            const modalBox = document.getElementById('modalBox');
-            const errorListUl = document.getElementById('modalErrorList');
+        /* Sisi Kiri */
+        .vy-split-brand { flex: 1; background-color: var(--vy-pine); color: var(--vy-cream); padding: 60px; display: flex; align-items: center; justify-content: center; }
+        .brand-headline { font-family: 'Playfair Display', serif; font-size: 4rem; line-height: 1.1; margin-bottom: 20px; }
+        .serif-accent { font-style: italic; font-weight: 500; }
+        .brand-description { opacity: 0.7; font-size: 14px; max-width: 400px; line-height: 1.6; }
 
-            if (isError) {
-                modalBox.classList.add('error');
-                // Menampilkan daftar error spesifik
-                if(ERRORS_LIST.length > 0) {
-                    errorListUl.innerHTML = '';
-                    ERRORS_LIST.forEach(err => {
-                        errorListUl.innerHTML += `<li>${err}</li>`;
-                    });
-                    errorListUl.style.display = 'block';
-                }
-            } else {
-                modalBox.classList.remove('error');
-                errorListUl.style.display = 'none';
-            }
+        /* Sisi Kanan */
+        .vy-split-form { flex: 1; background-color: var(--vy-cream); display: flex; justify-content: center; align-items: center; padding: 40px; }
+        .form-container { width: 100%; max-width: 420px; }
 
-            document.getElementById('customModal').classList.add('active');
+        /* Form UI */
+        .badge-serif { font-size: 10px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: var(--vy-pine); opacity: 0.6; margin-bottom: 15px; display: block; }
+        .editorial-form-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--vy-pine); margin-bottom: 30px; }
+        
+        .form-group-hairline { margin-bottom: 25px; }
+        .form-group-hairline label { font-size: 9px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--vy-pine); opacity: 0.8; margin-bottom: 8px; display: block; }
+        .input-hairline { width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(26, 47, 36, 0.25); padding: 10px 0; font-family: 'Playfair Display', serif; font-size: 18px; color: var(--vy-pine); outline: none; transition: 0.4s; }
+        .input-hairline:focus { border-bottom-color: var(--vy-pine); }
+
+        .error-message { color: #C25953; font-size: 10px; font-weight: 600; margin-top: 5px; display: block; }
+
+        .auth-link-bold { font-weight: 700; color: var(--vy-pine); text-decoration: none; border-bottom: 1px solid var(--vy-pine); transition: 0.3s; }
+        .auth-link-bold:hover { opacity: 0.6; }
+
+        .btn-checkout-pill { background-color: var(--vy-pine); color: var(--vy-cream); padding: 18px 45px; border-radius: 40px; border: none; width: 100%; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; cursor: pointer; transition: 0.4s; }
+        .btn-checkout-pill:hover { background-color: transparent; color: var(--vy-pine); box-shadow: inset 0 0 0 1.5px var(--vy-pine); }
+
+        @media (max-width: 900px) {
+            .vy-split-layout { flex-direction: column; height: auto; }
+            .vy-split-brand { padding: 40px; min-height: 30vh; }
         }
-
-        function closeModal() {
-            if (IS_SUCCESS) {
-                // Tampilkan loading text sebelum redirect
-                document.getElementById('modalBtn').disabled = true;
-                document.getElementById('modalBtn').innerText = 'Menunggu...';
-                document.getElementById('modalLoading').classList.add('show');
-                setTimeout(() => {
-                    window.location.href = "{{ route('login') }}";
-                }, 1000);
-            } else {
-                document.getElementById('customModal').classList.remove('active');
-            }
-        }
-
-        // Jalankan saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', function () {
-            if (IS_SUCCESS) {
-                showModal('✅', 'Pendaftaran Berhasil!', SUCCESS_MSG || 'Akun kamu berhasil dibuat. Silakan login untuk mulai belanja.', false);
-            } else if (HAS_ERRORS) {
-                showModal('⚠️', 'Pendaftaran Gagal', 'Mohon perbaiki kesalahan berikut:', true);
-            }
-        });
-    </script>
+    </style>
 </body>
 </html>

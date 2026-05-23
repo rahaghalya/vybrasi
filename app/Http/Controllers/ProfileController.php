@@ -83,7 +83,7 @@ class ProfileController extends Controller
                     'provinsi'       => $request->provinsi,
                     'kota'           => $request->kota,
                     'kode_pos'       => $request->kode_pos,
-                    'is_primary'     => true,
+                    'is_primary'     => DB::raw('true'),
                     'created_at'     => now(),
                     'updated_at'     => now(),
                 ]);

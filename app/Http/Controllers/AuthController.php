@@ -93,7 +93,7 @@ class AuthController extends Controller
             'email'     => strtolower($request->email),
             'password'  => Hash::make($request->password),
             'role'      => 'user',
-            'can_shop'  => true,
+            'can_shop'  => DB::raw('true'),
         ]);
 
         return redirect()->route('login')->with('success', 'Pendaftaran berhasil! Silakan login menggunakan akun Gmail Anda.');

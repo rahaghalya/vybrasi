@@ -11,12 +11,11 @@ use App\Http\Controllers\PayoutController;
 
 // --- RUTE PUBLIK (Tanpa Login) ---
 Route::get('/', function () {
-    // FIX: Menggunakan string 'true' untuk PostgreSQL
-    $featuredProducts = App\Models\Produk::where('is_featured', 'true')->take(8)->get();
+    $featuredProducts = App\Models\Produk::whereRaw('is_featured = true')->take(8)->get();
     $products = App\Models\Produk::latest()->take(6)->get(); 
     
     $testimonials = \Illuminate\Support\Facades\DB::table('jualan_kopi.testimoni')
-        ->where('is_tampil', 'true') // FIX: Menggunakan string 'true'
+        ->whereRaw('is_tampil = true')
         ->whereNull('id_produk') 
         ->orderBy('created_at', 'desc')->take(3)->get();
         
@@ -60,7 +59,7 @@ Route::get('/produk', function (\Illuminate\Http\Request $request) {
 
 Route::get('/produk/{slug}', function ($slug) {
     $produk = App\Models\Produk::with(['ulasan' => function($q) {
-        $q->where('is_hidden', 'false'); // FIX: Menggunakan string 'false'
+        $q->whereRaw('is_hidden = false');
     }, 'ulasan.user'])->where('slug', $slug)->firstOrFail();
     
     return view('pages.detail-produk', compact('produk')); 
@@ -114,22 +113,56 @@ Route::middleware(['auth'])->group(function () {
             'tanggal'      => 'required',
             'ulasan_teks'  => 'required',
             'rating'       => 'required|integer|min:1|max:5',
+            'id_produk'    => 'required_if:jenis_ulasan,produk',
         ]);
-        
-        $id_produk = ($request->jenis_ulasan == 'produk') ? $request->id_produk : null;
-        
-        \Illuminate\Support\Facades\DB::table('jualan_kopi.testimoni')->insert([
-            'id_testimoni'   => \Illuminate\Support\Str::uuid(),
-            'id_produk'      => $id_produk,
-            'nama_pelanggan' => $request->nama,
-            'rating'         => $request->rating,
-            'komentar'       => $request->ulasan_teks,
-            'is_tampil'      => 'false', // FIX: Pakai string 'false'
-            'created_at'     => now(),
-            'updated_at'     => now(),
+
+        $profile = \Illuminate\Support\Facades\DB::table('jualan_kopi.profiles')
+            ->where('id', auth()->user()->id)
+            ->first();
+
+        if (!$profile) {
+            return redirect()->route('pesanan.riwayat')->with('error', 'Profil tidak ditemukan.');
+        }
+
+        // Cek apakah sudah pernah mengulas produk ini
+        $sudahUlasan = \Illuminate\Support\Facades\DB::table('jualan_kopi.ulasan')
+            ->where('user_id', $profile->user_id)
+            ->where('id_produk', $request->id_produk)
+            ->exists();
+
+        if ($sudahUlasan) {
+            return redirect()->route('pesanan.riwayat')
+                ->with('error', 'Anda sudah pernah mengulas produk ini sebelumnya.');
+        }
+
+        $transaksi = \Illuminate\Support\Facades\DB::table('jualan_kopi.transaksi')
+            ->where('no_invoice', $request->invoice)
+            ->first();
+
+        $id_detail = null;
+        if ($transaksi && $request->id_produk) {
+            $detail = \Illuminate\Support\Facades\DB::table('jualan_kopi.transaksi_detail')
+                ->where('id_transaksi', $transaksi->id_transaksi)
+                ->where('id_produk', $request->id_produk)
+                ->first();
+            $id_detail = $detail?->id_detail;
+        }
+
+        \Illuminate\Support\Facades\DB::table('jualan_kopi.ulasan')->insert([
+            'id_ulasan'            => \Illuminate\Support\Str::uuid(),
+            'user_id'              => $profile->user_id,
+            'id_produk'            => $request->id_produk,
+            'id_detail'            => $id_detail,
+            'rating'               => $request->rating,
+            'komentar'             => $request->ulasan_teks,
+            'is_verified_purchase' => 'true',
+            'is_hidden'            => 'false',
+            'created_at'           => now(),
+            'updated_at'           => now(),
         ]);
-        
-        return redirect()->back()->with('success', 'Terima kasih! Pesan Anda telah kami terima.');
+
+        return redirect()->route('pesanan.riwayat')->with('success', 'Terima kasih! Ulasan Anda telah disimpan.');
+
     })->name('testimoni.store');
 
     Route::get('/keranjang', function () {
@@ -328,36 +361,35 @@ Route::middleware(['auth'])->group(function () {
         }
 
         \Illuminate\Support\Facades\DB::table('jualan_kopi.transaksi')->insert([
-            'id_transaksi'     => $idTransaksi,
-            'no_invoice'       => $orderId,
-            'user_id'          => $user->id,
-            'subtotal'         => $subtotal,
-            'biaya_pengiriman' => $ongkir,
-            'diskon'           => 0,
-            'total_harga'      => $totalBayar,
-            'status'           => 'pending', 
+            'id_transaksi'      => $idTransaksi,
+            'no_invoice'        => $orderId,
+            'user_id'           => $user->id,
+            'subtotal'          => $subtotal,
+            'biaya_pengiriman'  => $ongkir,
+            'diskon'            => 0,
+            'total_harga'       => $totalBayar,
+            'status'            => 'pending', 
             'metode_pembayaran' => $paymentMethod,
-            'catatan'          => $catatanInfo,
-            'created_at'       => now(), 'updated_at' => now(),
+            'catatan'           => $catatanInfo,
+            'created_at'        => now(), 'updated_at' => now(),
         ]);
 
         foreach($cartItems as $item) {
             \Illuminate\Support\Facades\DB::table('jualan_kopi.transaksi_detail')->insert([
-                'id_detail'   => \Illuminate\Support\Str::uuid(),
+                'id_detail'    => \Illuminate\Support\Str::uuid(),
                 'id_transaksi' => $idTransaksi,
-                'id_produk'   => $item->id_produk,
-                'nama_produk' => $item->nama_produk,
+                'id_produk'    => $item->id_produk,
+                'nama_produk'  => $item->nama_produk,
                 'harga_satuan' => $item->harga,
-                'jumlah'      => $item->jumlah,
-                'subtotal'    => ($item->harga * $item->jumlah),
-                'created_at'  => now(),
+                'jumlah'       => $item->jumlah,
+                'subtotal'     => ($item->harga * $item->jumlah),
+                'created_at'   => now(),
             ]);
 
             \Illuminate\Support\Facades\DB::table('jualan_kopi.produk')
                 ->where('id_produk', $item->id_produk)
                 ->decrement('stok', $item->jumlah);
                 
-            // --- LOGIKA KOMISI BARU (PENDING) ---
             $userProfile = \Illuminate\Support\Facades\DB::table('jualan_kopi.profiles')
                 ->where('user_id', $user->id)->first();
                 
@@ -374,7 +406,7 @@ Route::middleware(['auth'])->group(function () {
                         'id_transaksi'  => $idTransaksi,
                         'jumlah_komisi' => $komisi,
                         'persentase'    => 10,
-                        'status_komisi' => 'pending', // BARU: Tertunda, tidak langsung masuk ke total_komisi
+                        'status_komisi' => 'pending',
                         'created_at'    => now(),
                         'updated_at'    => now(),
                     ]);
@@ -447,6 +479,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/testimoni', [AdminController::class, 'testimoni'])->name('admin.testimoni');
     Route::post('/admin/testimoni/toggle/{id}', [AdminController::class, 'toggleTestimoni']);
     Route::delete('/admin/testimoni/hapus/{id}', [AdminController::class, 'hapusTestimoni'])->name('admin.testimoni.hapus');
+    Route::get('/admin/ulasan', [AdminController::class, 'ulasan'])->name('admin.ulasan');
+    Route::post('/admin/ulasan/toggle/{id}', [AdminController::class, 'toggleUlasan']);
+    Route::delete('/admin/ulasan/hapus/{id}', [AdminController::class, 'hapusUlasan']);
 
     Route::get('/admin/affiliate', [AdminController::class, 'affiliate'])->name('admin.affiliate');
     Route::get('/admin/affiliate/tambah', [AdminController::class, 'tambahAffiliate'])->name('admin.affiliate.tambah');
@@ -460,7 +495,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/payout/{id}', [PayoutController::class, 'adminDetail'])->name('admin.payout.detail');
     Route::patch('/admin/payout/{id}/approve', [PayoutController::class, 'approve'])->name('admin.payout.approve');
     Route::patch('/admin/payout/{id}/reject', [PayoutController::class, 'reject'])->name('admin.payout.reject');
-    // API Cek Pengajuan Payout Pending untuk Notifikasi
     Route::get('/admin/api/check-payout-pending', function() {
         $count = \Illuminate\Support\Facades\DB::table('jualan_kopi.payout_requests')
             ->where('status', 'pending')

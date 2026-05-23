@@ -226,7 +226,6 @@ class AdminController extends Controller
                 'jualan_kopi.affiliate_profiles.payment_method'
             );
 
-        // FIX: Tambahan Query untuk Filter Status dari Tab
         if ($request->filled('status')) {
             $query->where('jualan_kopi.affiliate_profiles.status_affiliate', $request->status);
         }
@@ -239,148 +238,135 @@ class AdminController extends Controller
     public function tambahAffiliate() { return view('pages_admin.tambah_affiliate'); }
 
     public function storeAffiliate(Request $request)
-{
-    $request->validate([
-        'full_name' => 'required|string|max:255',
-        'email'     => 'required|email|max:255',
-        'phone'     => 'required|string|max:20',
-        'kode_unik' => 'required|string',
-        'password'  => 'nullable|string',
-    ]);
- 
-    // Cek email sudah dipakai belum
-    $existsEmail = DB::table('jualan_kopi.profiles')->where('email', $request->email)->exists();
-    if ($existsEmail) {
-        return redirect()->back()->withInput()->with('error', 'Email ini sudah terdaftar di sistem.');
-    }
- 
-    // --- 1. Tentukan password ---
-    $passwordToSave = $request->password;
-    if (empty($passwordToSave)) {
-        $namaDepan          = strtolower(explode(' ', trim($request->full_name))[0]);
-        $empatDigitTerakhir = substr($request->phone, -4);
-        $passwordToSave     = $namaDepan . $empatDigitTerakhir;
-    }
- 
-    $supabaseUrl = 'https://jrgoxsxvccbcowqqrgxl.supabase.co';
-    $supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyZ294c3h2Y2NiY293cXFyZ3hsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODExMTI4MiwiZXhwIjoyMDkzNjg3MjgyfQ.cp8n6VShtxeOZ6UtjvLHsHKLdz_rsvWWxF0jMw4qrac';
- 
-    // --- 2. Buat user di Supabase Auth ---
-    $response = \Illuminate\Support\Facades\Http::withoutVerifying()
-        ->withHeaders([
-            'apikey'        => $supabaseKey,
-            'Authorization' => 'Bearer ' . $supabaseKey,
-            'Content-Type'  => 'application/json',
-        ])->post("{$supabaseUrl}/auth/v1/admin/users", [
-            'email'         => $request->email,
-            'password'      => $passwordToSave,
-            'email_confirm' => true,
+    {
+        $request->validate([
+            'full_name' => 'required|string|max:255',
+            'email'     => 'required|email|max:255',
+            'phone'     => 'required|string|max:20',
+            'kode_unik' => 'required|string',
+            'password'  => 'nullable|string',
         ]);
- 
-    if (!$response->successful()) {
-        return redirect()->back()
-            ->withInput()
-            ->with('error', 'Gagal membuat akun Auth Supabase: ' . ($response->json()['msg'] ?? $response->body()));
-    }
- 
-    $authUserId = $response->json()['id'];
- 
-    $usernameClean = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $request->full_name));
-    $autoUsername  = $usernameClean . '_' . rand(1000, 9999);
-    $kodeReferal   = 'REF-' . strtoupper(Str::random(6));
- 
-    // --- 3. RETRY LOOP: tunggu trigger Supabase membuat profile ---
-    // Lebih handal daripada usleep() dengan waktu tetap
-    $profileId      = null;
-    $existingProfile = null;
-    $maxAttempts    = 8;   // coba maksimal 8 kali
-    $delayMs        = 400; // jeda antar percobaan: 400ms
- 
-    for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
-        usleep($delayMs * 1000);
-        $existingProfile = DB::table('jualan_kopi.profiles')->where('user_id', $authUserId)->first();
-        if ($existingProfile) {
-            break; // Profile sudah ada, keluar dari loop
+     
+        $existsEmail = DB::table('jualan_kopi.profiles')->where('email', $request->email)->exists();
+        if ($existsEmail) {
+            return redirect()->back()->withInput()->with('error', 'Email ini sudah terdaftar di sistem.');
         }
-    }
- 
-    try {
-        if ($existingProfile) {
-            // --- SKENARIO A: Trigger Supabase sudah buat profile ---
-            // Cukup UPDATE role + data mitra, jangan INSERT ulang
-            $profileId = $existingProfile->id;
- 
-            DB::table('jualan_kopi.profiles')
-                ->where('id', $profileId)
-                ->update([
+     
+        $passwordToSave = $request->password;
+        if (empty($passwordToSave)) {
+            $namaDepan          = strtolower(explode(' ', trim($request->full_name))[0]);
+            $empatDigitTerakhir = substr($request->phone, -4);
+            $passwordToSave     = $namaDepan . $empatDigitTerakhir;
+        }
+     
+        $supabaseUrl = 'https://jrgoxsxvccbcowqqrgxl.supabase.co';
+        $supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyZ294c3h2Y2NiY293cXFyZ3hsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODExMTI4MiwiZXhwIjoyMDkzNjg3MjgyfQ.cp8n6VShtxeOZ6UtjvLHsHKLdz_rsvWWxF0jMw4qrac';
+     
+        $response = \Illuminate\Support\Facades\Http::withoutVerifying()
+            ->withHeaders([
+                'apikey'        => $supabaseKey,
+                'Authorization' => 'Bearer ' . $supabaseKey,
+                'Content-Type'  => 'application/json',
+            ])->post("{$supabaseUrl}/auth/v1/admin/users", [
+                'email'         => $request->email,
+                'password'      => $passwordToSave,
+                'email_confirm' => true,
+            ]);
+     
+        if (!$response->successful()) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal membuat akun Auth Supabase: ' . ($response->json()['msg'] ?? $response->body()));
+        }
+     
+        $authUserId = $response->json()['id'];
+     
+        $usernameClean = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $request->full_name));
+        $autoUsername  = $usernameClean . '_' . rand(1000, 9999);
+        $kodeReferal   = 'REF-' . strtoupper(Str::random(6));
+     
+        $profileId      = null;
+        $existingProfile = null;
+        $maxAttempts    = 8;  
+        $delayMs        = 400; 
+     
+        for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+            usleep($delayMs * 1000);
+            $existingProfile = DB::table('jualan_kopi.profiles')->where('user_id', $authUserId)->first();
+            if ($existingProfile) {
+                break; 
+            }
+        }
+     
+        try {
+            if ($existingProfile) {
+                $profileId = $existingProfile->id;
+     
+                DB::table('jualan_kopi.profiles')
+                    ->where('id', $profileId)
+                    ->update([
+                        'full_name'  => $request->full_name,
+                        'email'      => $request->email,
+                        'phone'      => $request->phone,
+                        'kode_unik'  => $request->kode_unik,
+                        'password'   => Hash::make($passwordToSave),
+                        'role'       => DB::raw("'affiliate'::jualan_kopi.user_role"),
+                        'can_shop'   => DB::raw('true'),
+                        'updated_at' => now(),
+                    ]);
+     
+            } else {
+                $profileId = (string) Str::uuid();
+     
+                DB::table('jualan_kopi.profiles')->insert([
+                    'id'         => $profileId,
+                    'user_id'    => $authUserId,
+                    'username'   => $autoUsername,
                     'full_name'  => $request->full_name,
                     'email'      => $request->email,
                     'phone'      => $request->phone,
                     'kode_unik'  => $request->kode_unik,
                     'password'   => Hash::make($passwordToSave),
-                    // UPDATE role ke affiliate — ini kunci utamanya
                     'role'       => DB::raw("'affiliate'::jualan_kopi.user_role"),
                     'can_shop'   => DB::raw('true'),
+                    'created_at' => now(),
                     'updated_at' => now(),
                 ]);
- 
-        } else {
-            // --- SKENARIO B: Trigger tidak jalan sama sekali ---
-            // INSERT manual dengan role affiliate dari awal
-            $profileId = (string) Str::uuid();
- 
-            DB::table('jualan_kopi.profiles')->insert([
-                'id'         => $profileId,
-                'user_id'    => $authUserId,
-                'username'   => $autoUsername,
-                'full_name'  => $request->full_name,
-                'email'      => $request->email,
-                'phone'      => $request->phone,
-                'kode_unik'  => $request->kode_unik,
-                'password'   => Hash::make($passwordToSave),
-                'role'       => DB::raw("'affiliate'::jualan_kopi.user_role"),
-                'can_shop'   => DB::raw('true'),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            }
+     
+            $cekAffiliate = DB::table('jualan_kopi.affiliate_profiles')
+                ->where('profile_id', $profileId)
+                ->exists();
+     
+            if (!$cekAffiliate) {
+                DB::table('jualan_kopi.affiliate_profiles')->insert([
+                    'id_affiliate'     => (string) Str::uuid(),
+                    'profile_id'       => $profileId,
+                    'nama_lengkap'     => $request->full_name,
+                    'kode_referal'     => $kodeReferal,
+                    'komisi_persen'    => 5.00,
+                    'total_komisi'     => 0,
+                    'minimum_payout'   => 100000,
+                    'status_affiliate' => 'active',
+                    'created_at'       => now(),
+                    'updated_at'       => now(),
+                ]);
+            }
+     
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal menyimpan data mitra ke database: ' . $e->getMessage());
         }
- 
-        // --- 4. Tambah ke affiliate_profiles (kalau belum ada) ---
-        $cekAffiliate = DB::table('jualan_kopi.affiliate_profiles')
-            ->where('profile_id', $profileId)
-            ->exists();
- 
-        if (!$cekAffiliate) {
-            DB::table('jualan_kopi.affiliate_profiles')->insert([
-                'id_affiliate'     => (string) Str::uuid(),
-                'profile_id'       => $profileId,
-                'nama_lengkap'     => $request->full_name,
-                'kode_referal'     => $kodeReferal,
-                'komisi_persen'    => 5.00,
-                'total_komisi'     => 0,
-                'minimum_payout'   => 100000,
-                'status_affiliate' => 'active',
-                'created_at'       => now(),
-                'updated_at'       => now(),
+     
+        return redirect()->route('admin.affiliate')
+            ->with('affiliate_baru', [
+                'nama'     => $request->full_name,
+                'email'    => $request->email,
+                'password' => $passwordToSave,
+                'kode'     => $request->kode_unik,
             ]);
-        }
- 
-    } catch (\Exception $e) {
-        // Tampilkan error sebenarnya agar mudah di-debug
-        return redirect()->back()
-            ->withInput()
-            ->with('error', 'Gagal menyimpan data mitra ke database: ' . $e->getMessage());
     }
- 
-    // --- 5. Redirect + session popup ---
-    return redirect()->route('admin.affiliate')
-        ->with('affiliate_baru', [
-            'nama'     => $request->full_name,
-            'email'    => $request->email,
-            'password' => $passwordToSave,
-            'kode'     => $request->kode_unik,
-        ]);
-}
     
     public function profilAffiliate($id)
     {
@@ -562,7 +548,6 @@ class AdminController extends Controller
 
         DB::table('jualan_kopi.transaksi')->where('id_transaksi', $request->id_transaksi)->update($updateData);
 
-        // FIX: Jika status diubah jadi delivered, cairkan komisi affiliate
         if ($request->status_pengiriman === 'delivered') {
             $this->prosesKomisiAffiliate($request->id_transaksi);
         }
@@ -594,7 +579,6 @@ class AdminController extends Controller
     {
         DB::table('jualan_kopi.transaksi')->where('id_transaksi', $id)->update(['status' => $status, 'updated_at' => now()]);
         
-        // FIX: Jika dipindah ke kolom Selesai (delivered), cairkan komisi affiliate
         if ($status === 'delivered') {
             $this->prosesKomisiAffiliate($id);
         }
@@ -603,7 +587,7 @@ class AdminController extends Controller
     }
 
     // ---------------------------------------------------------
-    // PESAN MASUK (INBOX TESTIMONI)
+    // PESAN MASUK (INBOX TESTIMONI BAWAAN)
     // ---------------------------------------------------------
     public function pesan()
     {
@@ -628,9 +612,6 @@ class AdminController extends Controller
         return response()->json(['success' => true]);
     }
 
-    // ---------------------------------------------------------
-    // TESTIMONI (TAMPILAN BIASA)
-    // ---------------------------------------------------------
     public function testimoni()
     {
         $testimonis = DB::table('jualan_kopi.testimoni')
@@ -639,6 +620,44 @@ class AdminController extends Controller
             ->orderBy('testimoni.created_at', 'desc')
             ->get();
         return view('pages_admin.manajemen_testimoni', compact('testimonis'));
+    }
+
+    // ---------------------------------------------------------
+    // MANAJEMEN ULASAN (RATING BINTANG PRODUK)
+    // ---------------------------------------------------------
+    public function ulasan()
+    {
+        $ulasans = DB::table('jualan_kopi.ulasan')
+            ->leftJoin('jualan_kopi.produk', 'ulasan.id_produk', '=', 'produk.id_produk')
+            ->leftJoin('jualan_kopi.profiles', 'ulasan.user_id', '=', 'profiles.user_id')
+            ->select('ulasan.*', 'produk.nama as nama_produk', 'profiles.full_name as nama_pelanggan')
+            ->orderBy('ulasan.created_at', 'desc')
+            ->get();
+            
+        return view('pages_admin.manajemen_ulasan', compact('ulasans'));
+    }
+
+    public function toggleUlasan($id)
+    {
+        $ulasan = DB::table('jualan_kopi.ulasan')->where('id_ulasan', $id)->first();
+
+        if($ulasan) {
+            // Logika kebalikan: jika is_hidden = false (tampil), maka jadikan true (sembunyi)
+            $newStatus = !($ulasan->is_hidden ?? false);
+            
+            DB::table('jualan_kopi.ulasan')
+                ->where('id_ulasan', $id)
+                ->update(['is_hidden' => $newStatus ? DB::raw('true') : DB::raw('false')]);
+                
+            return response()->json(['success' => true, 'is_hidden' => $newStatus]);
+        }
+        return response()->json(['success' => false]);
+    }
+
+    public function hapusUlasan($id)
+    {
+        DB::table('jualan_kopi.ulasan')->where('id_ulasan', $id)->delete();
+        return response()->json(['success' => true]);
     }
 
     // ---------------------------------------------------------
@@ -678,19 +697,16 @@ class AdminController extends Controller
     // ---------------------------------------------------------
     private function prosesKomisiAffiliate($id_transaksi)
     {
-        // Cari semua komisi tertunda (pending) yang terkait dengan transaksi ini
         $komisis = DB::table('jualan_kopi.komisi_histori')
             ->where('id_transaksi', $id_transaksi)
             ->where('status_komisi', 'pending')
             ->get();
 
         foreach ($komisis as $k) {
-            // 1. Tambah uang ke saldo utama affiliate
             DB::table('jualan_kopi.affiliate_profiles')
                 ->where('id_affiliate', $k->id_affiliate)
                 ->increment('total_komisi', $k->jumlah_komisi);
 
-            // 2. Ubah status historinya menjadi sukses agar tidak dicairkan dobel
             DB::table('jualan_kopi.komisi_histori')
                 ->where('id_histori', $k->id_histori)
                 ->update([
